@@ -1,7 +1,10 @@
-[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="TowerData" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
 [ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
+[ext_resource type="Texture2D" path="res://art/towers/artillery/base_l1.svg" id="3_base"]
+[ext_resource type="Texture2D" path="res://art/towers/artillery/turret_l1.svg" id="4_turret"]
+[ext_resource type="Texture2D" path="res://art/fx/mortar_shell.svg" id="5_shell"]
 
 [sub_resource type="Resource" id="TowerLevel_1"]
 script = ExtResource("2_tower_level")
@@ -13,8 +16,13 @@ splash_radius = 80.0
 projectile_speed = 330.0
 projectile_color = Color(0.34902, 0.321569, 0.301961, 1)
 projectile_radius = 9.0
+projectile_texture = ExtResource("5_shell")
 upgrade_cost = 0
+texture = ExtResource("3_base")
+turret_texture = ExtResource("4_turret")
 sprite_scale = 1.0
+muzzle_offset = 30.0
+bow_rig = false
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
@@ -26,8 +34,13 @@ splash_radius = 88.0
 projectile_speed = 350.0
 projectile_color = Color(0.34902, 0.321569, 0.301961, 1)
 projectile_radius = 9.0
+projectile_texture = ExtResource("5_shell")
 upgrade_cost = 160
+texture = ExtResource("3_base")
+turret_texture = ExtResource("4_turret")
 sprite_scale = 1.05
+muzzle_offset = 30.0
+bow_rig = false
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
@@ -39,34 +52,13 @@ splash_radius = 96.0
 projectile_speed = 370.0
 projectile_color = Color(0.290196, 0.266667, 0.25098, 1)
 projectile_radius = 10.0
+projectile_texture = ExtResource("5_shell")
 upgrade_cost = 230
+texture = ExtResource("3_base")
+turret_texture = ExtResource("4_turret")
 sprite_scale = 1.1
-
-[sub_resource type="Resource" id="TowerLevel_A"]
-script = ExtResource("2_tower_level")
-damage = 210.0
-attack_range = 285.0
-fire_rate = 0.55
-damage_type = "physical"
-splash_radius = 112.0
-projectile_speed = 390.0
-projectile_color = Color(0.219608, 0.203922, 0.192157, 1)
-projectile_radius = 11.0
-upgrade_cost = 450
-sprite_scale = 1.2
-
-[sub_resource type="Resource" id="TowerLevel_B"]
-script = ExtResource("2_tower_level")
-damage = 125.0
-attack_range = 275.0
-fire_rate = 1.0
-damage_type = "magic"
-splash_radius = 65.0
-projectile_speed = 1100.0
-projectile_color = Color(0.603922, 0.85098, 1, 1)
-projectile_radius = 7.0
-upgrade_cost = 450
-sprite_scale = 1.2
+muzzle_offset = 30.0
+bow_rig = false
 
 [resource]
 script = ExtResource("1_tower_data")
@@ -78,7 +70,3 @@ accent_color = Color(0.85098, 0.447059, 0.247059, 1)
 targeting_mode = "first"
 can_hit_flying = false
 levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
-branch_a = SubResource("TowerLevel_A")
-branch_a_name = "Cannon"
-branch_b = SubResource("TowerLevel_B")
-branch_b_name = "Tesla"

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TowerData" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="TowerData" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
 [ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
@@ -60,42 +60,6 @@ sprite_scale = 1.1
 muzzle_offset = 28.0
 bow_rig = true
 
-[sub_resource type="Resource" id="TowerLevel_A"]
-script = ExtResource("2_tower_level")
-damage = 58.0
-attack_range = 275.0
-fire_rate = 1.7
-damage_type = "physical"
-splash_radius = 0.0
-projectile_speed = 1000.0
-projectile_color = Color(1, 0.92549, 0.564706, 1)
-projectile_radius = 5.0
-projectile_texture = ExtResource("5_bolt")
-upgrade_cost = 320
-texture = ExtResource("3_base")
-turret_texture = ExtResource("4_turret")
-sprite_scale = 1.2
-muzzle_offset = 28.0
-bow_rig = true
-
-[sub_resource type="Resource" id="TowerLevel_B"]
-script = ExtResource("2_tower_level")
-damage = 24.0
-attack_range = 245.0
-fire_rate = 3.0
-damage_type = "physical"
-splash_radius = 0.0
-projectile_speed = 780.0
-projectile_color = Color(0.784314, 0.941176, 0.647059, 1)
-projectile_radius = 4.0
-projectile_texture = ExtResource("5_bolt")
-upgrade_cost = 320
-texture = ExtResource("3_base")
-turret_texture = ExtResource("4_turret")
-sprite_scale = 1.2
-muzzle_offset = 28.0
-bow_rig = true
-
 [resource]
 script = ExtResource("1_tower_data")
 id = &"archer"
@@ -106,7 +70,3 @@ accent_color = Color(0.352941, 0.701961, 0.352941, 1)
 targeting_mode = "first"
 can_hit_flying = true
 levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
-branch_a = SubResource("TowerLevel_A")
-branch_a_name = "Sharpshooter"
-branch_b = SubResource("TowerLevel_B")
-branch_b_name = "Ranger Camp"
