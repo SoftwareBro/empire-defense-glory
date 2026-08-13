@@ -22,12 +22,12 @@ A Kingdom Rush–style 2D tower defense game.
 
 ### Towers
 
-| Tower | Cost | Role | Branch A | Branch B |
-|---|---|---|---|---|
-| Archer | 70 | Fast single-target physical | Sharpshooter (crit, pierce) | Ranger Camp (multishot, poison) |
-| Barracks | 60 | Blocks the path, melee soldiers | Knights (tanky, taunt) | Assassins (evasion, execute) |
-| Mage | 100 | Magic damage, ignores armor | Arcane Wizard (chain bolt) | Sorcerer (polymorph, curse) |
-| Artillery | 125 | Slow AoE | Cannon (splash, stun) | Tesla (chain lightning, burn) |
+| Tower | Cost | Targets air | Role | Branch A | Branch B |
+|---|---|---|---|---|---|
+| Archer | 70 | Yes | Fast single-target physical | Sharpshooter (crit, pierce) | Ranger Camp (multishot, poison) |
+| Barracks | 60 | No | Blocks the path, melee soldiers | Knights (tanky, taunt) | Assassins (evasion, execute) |
+| Mage | 100 | Yes | Magic damage, ignores armor | Arcane Wizard (chain bolt) | Sorcerer (splash curse) |
+| Artillery | 125 | No | Slow, heavy splash | Cannon (bigger splash, stun) | Tesla (fast magic, chain) |
 
 ### Enemies
 
@@ -36,7 +36,7 @@ A Kingdom Rush–style 2D tower defense game.
 | Grunt | Fast, no armor |
 | Armored Soldier | High physical resist |
 | Ranged Attacker | Shoots barracks soldiers |
-| Flyer | Ignores path blockers |
+| Flyer | Ignores path blockers, only air-capable towers can hit it |
 | Swarm / Spawner | Splits into smaller units on death |
 | **Boss** | Huge HP, AoE stun, immune to slow |
 
@@ -52,12 +52,12 @@ Towers, enemies, waves, and levels are all `.tres` Resource files. Adding level 
 res://
 ├─ scenes/
 │  ├─ core/     Level.tscn  HUD.tscn
-│  ├─ towers/   TowerBase.tscn  BuildPlot.tscn
+│  ├─ towers/   TowerBase.tscn  BuildPlot.tscn  Projectile.tscn
 │  └─ enemies/  EnemyBase.tscn
 ├─ scripts/
-│  ├─ autoload/   Events.gd  GameState.gd
+│  ├─ autoload/   events.gd  game_state.gd
 │  ├─ core/       level.gd  hud.gd
-│  ├─ towers/     tower.gd  build_plot.gd
+│  ├─ towers/     tower.gd  build_plot.gd  projectile.gd
 │  ├─ enemies/    enemy.gd
 │  ├─ ui/         build_menu.gd
 │  └─ resources/  tower_data.gd  tower_level.gd
@@ -77,13 +77,34 @@ res://
 
 ---
 
+## Combat model
+
+- Enemies register in the `enemies` group. Towers scan that group and distance-check — no physics queries, no shape resizing when range changes on upgrade.
+- Each enemy tracks `progress` (pixels travelled along the route), which is what makes **first / last** targeting possible.
+- Damage is `amount * (1.0 - resist)`, where resist is `physical_resist` or `magic_resist` depending on the shot's `damage_type`. This is why Mage towers counter armour.
+- Projectiles home on the live target but remember its last position, so a shot whose target dies mid-flight still lands instead of vanishing.
+- Splash shots damage every enemy within `splash_radius` of the impact point.
+
+### Targeting modes
+
+Set per tower via `targeting_mode` in its `.tres`.
+
+| Mode | Picks |
+|---|---|
+| `first` | Furthest along the path (genre default) |
+| `last` | Least far along — good for cleanup towers |
+| `closest` | Nearest to the tower |
+| `strongest` | Highest current health |
+
+---
+
 ## Milestones
 
 - [x] **M0** — Repo, gitignore, project settings
 - [x] **M1** — Route + walking enemy + lives counter
 - [x] **M2** — Build plots, radial build menu, gold, tower placement
-- [ ] **M3** — Targeting, projectiles, damage, death, bounty
-- [ ] **M4** — WaveManager, wave counter, win/lose
+- [x] **M3** — Targeting, projectiles, damage, death, bounty
+- [ ] **M4** — WaveManager, auto wave flow, win/lose screens
 - [ ] **M5** — Upgrades L1→L3 + 2 branches + sell
 - [ ] **M6** — Effects pass: particles, damage numbers, screen shake, SFX
 - [ ] **M7** — In-editor level editor tool (click to place path + plots, save `.tres`)
@@ -114,3 +135,8 @@ res://
 - Upload the exported `.zip` to itch.io, mark it **"This file will be played in the browser"**
 - Enable **SharedArrayBuffer support** in the itch.io embed settings (required by Godot 4 web builds)
 - Keep total build under ~50 MB; use `.ogg` audio and atlas textures ≤ 2048px
+
+## Known gotchas
+
+- A full-screen `ColorRect` or `TextureRect` with the default `mouse_filter = Stop` will swallow every click before it reaches the world. All full-screen UI in this project must use `mouse_filter = Ignore`.
+- Godot's New Project dialog appends the project name to the path. When cloning this repo first, point *Project Path* at the existing folder and ignore the "selected path is not empty" warning.
