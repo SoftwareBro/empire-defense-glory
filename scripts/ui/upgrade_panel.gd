@@ -142,11 +142,22 @@ func _add_stats(box: VBoxContainer, accent: Color) -> void:
 
 	# Sustained output, which is the number that actually decides a purchase and
 	# the one players otherwise work out on paper.
-	var dps: float = now.damage * now.fire_rate
-	var dps_text: String = "SUSTAINED  %s dmg/s" % String.num(dps, 1)
+	var dps_text: String = "SUSTAINED  %s dmg/s" % String.num(_dps(now), 1)
 	if soon != null:
-		dps_text += "   \u2192  %s" % String.num(soon.damage * soon.fire_rate, 1)
+		dps_text += "   \u2192  %s" % String.num(_dps(soon), 1)
 	box.add_child(PixelTheme.make_label(dps_text, 11, PixelTheme.MUTED))
+
+
+## Damage per second over a whole cycle, which is the reload *plus* the wind-up.
+## Multiplying damage by fire_rate would overstate every charging weapon, and the
+## tower damage numbers were balanced against this figure.
+func _dps(level: TowerLevel) -> float:
+	if level.fire_rate <= 0.0:
+		return 0.0
+	var cycle: float = 1.0 / level.fire_rate + level.windup_time
+	if cycle <= 0.0:
+		return 0.0
+	return level.damage / cycle
 
 
 func _add_actions(box: VBoxContainer, accent: Color) -> void:
