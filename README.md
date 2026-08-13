@@ -59,7 +59,7 @@ res://
 │  ├─ core/       level.gd  wave_manager.gd  hud.gd
 │  ├─ towers/     tower.gd  build_plot.gd  projectile.gd
 │  ├─ enemies/    enemy.gd
-│  ├─ ui/         build_menu.gd
+│  ├─ ui/         build_menu.gd  upgrade_panel.gd
 │  └─ resources/  tower_data.gd  tower_level.gd
 │                  enemy_data.gd  level_data.gd
 │                  wave_data.gd   wave_entry.gd
@@ -103,9 +103,22 @@ Set per tower via `targeting_mode` in its `.tres`.
 `WaveManager` is a state machine: `COUNTDOWN → SPAWNING → CLEARING →` (next wave, or `FINISHED`).
 
 - `delay_before` on each `WaveData` sets that wave's countdown. Pressing **SPACE** during a countdown skips it and pays **2 gold per whole second saved** — the risk/reward lever the genre runs on.
+- `WaveManager.early_call_bonus_for()` is the single source of truth for that bonus, so the HUD can never advertise an amount the player is not actually paid.
 - A wave's `entries` each run as their own coroutine, so one wave can send a slow group and a fast group that overlap. `start_delay` staggers them.
 - Victory fires only when every wave has spawned **and** the map is clear. Defeat fires the moment lives hit zero.
 - Both outcomes pause the tree. The overlay uses `process_mode = Always` so its Restart button still responds while paused.
+
+---
+
+## Upgrade model
+
+A tower holds a `level_index` into `data.levels` plus a `branch` of `""`, `"a"`, or `"b"`. `current_level()` resolves those to a single `TowerLevel`, and every combat number is read from it. That means **an upgrade is just pointing at a different resource** — there is no per-level code anywhere.
+
+- Click a **built** tower to open the upgrade panel; click an **empty** plot for the build menu.
+- The panel shows current stats and a `Next:` preview line so the purchase can be judged before paying.
+- At Lv 3 the upgrade button is replaced by the two specializations. The choice is **permanent** — that is the decision the genre is built around.
+- **Sell** refunds **70%** of everything invested (build cost + every upgrade actually paid for), computed by `total_invested()` rather than stored, so it stays correct no matter what path the tower took.
+- Rank is readable on the map: white pips above the tower for Lv 1–3, a gold ring once specialized.
 
 ---
 
@@ -116,7 +129,7 @@ Set per tower via `targeting_mode` in its `.tres`.
 - [x] **M2** — Build plots, radial build menu, gold, tower placement
 - [x] **M3** — Targeting, projectiles, damage, death, bounty
 - [x] **M4** — WaveManager, automatic wave flow, early-call bonus, win/lose screens
-- [ ] **M5** — Upgrades L1→L3 + 2 branches + sell
+- [x] **M5** — Upgrades L1→L3, specialization branches, sell for refund
 - [ ] **M6** — Effects pass: particles, damage numbers, screen shake, SFX
 - [ ] **M7** — In-editor level editor tool (click to place path + plots, save `.tres`)
 - [ ] **M8** — Real art pass, then content fill-out
@@ -129,6 +142,7 @@ Set per tower via `targeting_mode` in its `.tres`.
 |---|---|
 | Click an empty plot | Open the radial build menu |
 | Click a tower button | Build it (greyed out if you cannot afford it) |
+| Click a built tower | Open the upgrade / sell panel |
 | Click anywhere else | Dismiss the menu |
 | Hover a built tower | Show its attack range |
 | **SPACE** | Call the next wave early for bonus gold |
