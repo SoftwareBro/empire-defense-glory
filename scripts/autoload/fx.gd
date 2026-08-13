@@ -9,6 +9,8 @@ extends Node
 
 const DAMAGE_NUMBER_SCENE: PackedScene = preload("res://scenes/fx/DamageNumber.tscn")
 const SHOCKWAVE_SCENE: PackedScene = preload("res://scenes/fx/Shockwave.tscn")
+const BEAM_SCENE: PackedScene = preload("res://scenes/fx/Beam.tscn")
+const LIGHTNING_SCENE: PackedScene = preload("res://scenes/fx/Lightning.tscn")
 
 const PHYSICAL_COLOR: Color = Color(1.0, 0.94, 0.82, 1.0)
 const MAGIC_COLOR: Color = Color(0.79, 0.63, 1.0, 1.0)
@@ -21,6 +23,8 @@ const BUILD_DUST_COLOR: Color = Color(0.85, 0.78, 0.62, 1.0)
 const UPGRADE_GOLD: Color = Color(1.0, 0.85, 0.38, 1.0)
 ## Cordite grey for splash impacts.
 const SMOKE_COLOR: Color = Color(0.62, 0.59, 0.56, 1.0)
+## Storm blue-white for the spell tower's discharge.
+const SPELL_COLOR: Color = Color(0.72, 0.82, 1.0, 1.0)
 
 var _shake_strength: float = 0.0
 var _shake_decay: float = 1.0
@@ -124,6 +128,78 @@ func muzzle_flash(world_position: Vector2, color: Color) -> void:
 	_burst(world_position, color, 4, 90.0, 0.16, 2.5, 0.0)
 
 
+## An instant-hit laser between two points. The damage has already been applied
+## by the caller; this is the visual record of it, plus load at both ends.
+func beam(from: Vector2, to: Vector2, color: Color, width: float = 7.0, lifetime: float = 0.22) -> void:
+	var root := _root()
+	if root == null:
+		return
+
+	var laser: Beam = BEAM_SCENE.instantiate()
+	root.add_child(laser)
+	laser.play(from, to, color, width, lifetime)
+
+	# Negative gravity so the spent energy drifts upward off both ends.
+	_burst(from, color, 8, 130.0, 0.26, 3.0, -40.0)
+	_burst(to, color, 14, 210.0, 0.34, 3.5, -30.0)
+	shockwave(to, color, 4.0, 30.0, 4.0, 0.26)
+
+
+## The instant a charging core reaches full: a ring collapsing onto the muzzle.
+func charge_snap(world_position: Vector2, color: Color) -> void:
+	shockwave(world_position, color, 34.0, 6.0, 3.5, 0.18)
+
+
+## A mortar throwing its shell: cordite out of the muzzle along the line of
+## fire, and a solid thump. Artillery should be felt before it is seen.
+func mortar_launch(world_position: Vector2, angle: float) -> void:
+	var direction := Vector2.from_angle(angle)
+	_burst(world_position, SMOKE_COLOR, 16, 210.0, 0.5, 5.5, -40.0, direction, 42.0)
+	_burst(world_position, Color(1.0, 0.78, 0.36, 1.0), 10, 260.0, 0.24, 3.5, 20.0, direction, 30.0)
+	shockwave(world_position, SMOKE_COLOR, 4.0, 34.0, 5.0, 0.26)
+	shake(4.0, 0.24)
+
+
+## A shell coming down: dirt ring at the true blast radius, a fireball inside
+## it, and debris thrown up out of the crater. A shell that hit nothing still
+## throws dirt, but it does not get to kick the camera as hard.
+func mortar_impact(world_position: Vector2, color: Color, splash_radius: float, connected: bool = true) -> void:
+	var r: float = maxf(splash_radius, 24.0)
+	shockwave(world_position, SMOKE_COLOR, r * 0.18, r, 8.0, 0.38)
+	shockwave(world_position, Color(1.0, 0.72, 0.32, 1.0), r * 0.10, r * 0.55, 6.0, 0.24)
+	_burst(world_position, SMOKE_COLOR, 24, r * 3.6, 0.62, 7.0, -50.0)
+	_burst(world_position, Color(1.0, 0.70, 0.30, 1.0), 16, r * 4.4, 0.32, 4.5, 90.0)
+	_burst(world_position, color, 10, r * 2.4, 0.5, 3.5, 300.0)
+	shake(6.0 if connected else 3.0, 0.3)
+
+
+## A spell tower finishing its recharge. Deliberately restrained — this is a
+## prompt telling the player something is available, not an event in itself.
+func spell_ready(world_position: Vector2, accent: Color) -> void:
+	shockwave(world_position, accent, 20.0, 62.0, 4.0, 0.42)
+	_burst(world_position, accent, 12, 120.0, 0.5, 3.0, -80.0)
+
+
+## The spell going off: a bolt out of the sky, a blast ring at the radius it
+## actually covers, and the hardest camera kick any tower gets.
+func lightning_strike(world_position: Vector2, blast_radius: float, accent: Color) -> void:
+	var root := _root()
+	if root == null:
+		return
+
+	var bolt: Lightning = LIGHTNING_SCENE.instantiate()
+	root.add_child(bolt)
+	bolt.global_position = world_position
+	bolt.play(SPELL_COLOR, 0.5)
+
+	var r: float = maxf(blast_radius, 24.0)
+	shockwave(world_position, SPELL_COLOR, 6.0, r, 9.0, 0.42)
+	shockwave(world_position, accent, r, r * 0.35, 5.0, 0.30)
+	_burst(world_position, SPELL_COLOR, 30, r * 4.0, 0.5, 5.0, -60.0)
+	_burst(world_position, Color(1.0, 1.0, 1.0, 1.0), 14, r * 2.2, 0.3, 3.5, 0.0)
+	shake(9.0, 0.42)
+
+
 ## A tower landing on its plot: dust punching outward, an accent ring snapping
 ## inward behind it, thrown grit, and a short thump on the camera.
 func build_flourish(world_position: Vector2, accent: Color) -> void:
@@ -165,7 +241,10 @@ func _root() -> Node:
 
 ## CPUParticles2D rather than GPUParticles2D: the web export runs on the
 ## Compatibility renderer, where CPU particles are the dependable option.
-func _burst(world_position: Vector2, color: Color, amount: int, speed: float, lifetime: float, size: float, gravity: float) -> void:
+##
+## `direction` and `spread` default to a uniform ball. Narrow the spread and
+## point the direction to throw particles the way a barrel is aimed.
+func _burst(world_position: Vector2, color: Color, amount: int, speed: float, lifetime: float, size: float, gravity: float, direction: Vector2 = Vector2.RIGHT, spread: float = 180.0) -> void:
 	var root := _root()
 	if root == null:
 		return
@@ -176,8 +255,8 @@ func _burst(world_position: Vector2, color: Color, amount: int, speed: float, li
 	particles.explosiveness = 1.0
 	particles.amount = amount
 	particles.lifetime = lifetime
-	particles.direction = Vector2.RIGHT
-	particles.spread = 180.0
+	particles.direction = direction
+	particles.spread = spread
 	particles.initial_velocity_min = speed * 0.35
 	particles.initial_velocity_max = speed
 	particles.gravity = Vector2(0.0, gravity)
