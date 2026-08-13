@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Artillery projectile: a fused iron mortar shell.
+  96px canvas over a 32-unit viewBox, authored pointing RIGHT (+X) with the
+  lit fuse leading so the shot reads nose-first.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 32 32">
+	<defs>
+		<radialGradient id="sBody" cx="0.34" cy="0.3" r="0.76">
+			<stop offset="0" stop-color="#7A756F"/>
+			<stop offset="0.55" stop-color="#403B37"/>
+			<stop offset="1" stop-color="#191614"/>
+		</radialGradient>
+		<radialGradient id="sFuse" cx="0.5" cy="0.5" r="0.5">
+			<stop offset="0" stop-color="#FFF8D8"/>
+			<stop offset="0.4" stop-color="#FFB03A" stop-opacity="0.9"/>
+			<stop offset="1" stop-color="#FF6A1E" stop-opacity="0"/>
+		</radialGradient>
+	</defs>
+
+	<!-- Smoke wisp trailing behind. -->
+	<path d="M 12 12.8 Q 2 16 12 19.2 Z" fill="#8C837C" opacity="0.38"/>
+
+	<!-- Cast iron body. -->
+	<circle cx="16.5" cy="16" r="9" fill="url(#sBody)" stroke="#120F0E" stroke-width="1.5"/>
+	<path d="M 10.7 11 A 9 9 0 0 1 20.1 8.2" fill="none" stroke="#B2ABA3" stroke-width="1.7" stroke-linecap="round" opacity="0.6"/>
+
+	<!-- Brass equator band, wrapping the visible half. -->
+	<path d="M 16.5 7 A 9 9 0 0 1 16.5 25" fill="none" stroke="#C9922E" stroke-width="2.6"/>
+	<path d="M 16.5 7.6 A 8.4 8.4 0 0 1 16.5 24.4" fill="none" stroke="#F0C25F" stroke-width="0.9" opacity="0.9"/>
+
+	<!-- Lit fuse at the nose. -->
+	<path d="M 25 16 L 21.5 16" stroke="#5E5148" stroke-width="1.6" stroke-linecap="round"/>
+	<circle cx="26.5" cy="16" r="5.5" fill="url(#sFuse)"/>
+	<circle cx="26.5" cy="16" r="2" fill="#FFF8D8"/>
+</svg>

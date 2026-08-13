@@ -32,7 +32,6 @@
 
 	<!-- Trunnion cheek the barrel pivots in, drawn under the barrel. -->
 	<rect x="36" y="33" width="13" height="30" rx="3.5" fill="#6B5A45" stroke="#211A16" stroke-width="2"/>
-	<line x1="38.5" y1="35" x2="38.5" y2="61" stroke="#A08straight" stroke-width="0"/>
 
 	<!-- Barrel. -->
 	<path d="M 34 39 L 82 36.4 L 82 59.6 L 34 57 Q 29.5 48 34 39 Z" fill="url(#barrelG)" stroke="#211A16" stroke-width="2.4" stroke-linejoin="round"/>
