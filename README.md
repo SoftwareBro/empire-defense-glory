@@ -56,7 +56,7 @@ res://
 │  └─ enemies/  EnemyBase.tscn
 ├─ scripts/
 │  ├─ autoload/   events.gd  game_state.gd
-│  ├─ core/       level.gd  hud.gd
+│  ├─ core/       level.gd  wave_manager.gd  hud.gd
 │  ├─ towers/     tower.gd  build_plot.gd  projectile.gd
 │  ├─ enemies/    enemy.gd
 │  ├─ ui/         build_menu.gd
@@ -98,13 +98,24 @@ Set per tower via `targeting_mode` in its `.tres`.
 
 ---
 
+## Wave lifecycle
+
+`WaveManager` is a state machine: `COUNTDOWN → SPAWNING → CLEARING →` (next wave, or `FINISHED`).
+
+- `delay_before` on each `WaveData` sets that wave's countdown. Pressing **SPACE** during a countdown skips it and pays **2 gold per whole second saved** — the risk/reward lever the genre runs on.
+- A wave's `entries` each run as their own coroutine, so one wave can send a slow group and a fast group that overlap. `start_delay` staggers them.
+- Victory fires only when every wave has spawned **and** the map is clear. Defeat fires the moment lives hit zero.
+- Both outcomes pause the tree. The overlay uses `process_mode = Always` so its Restart button still responds while paused.
+
+---
+
 ## Milestones
 
 - [x] **M0** — Repo, gitignore, project settings
 - [x] **M1** — Route + walking enemy + lives counter
 - [x] **M2** — Build plots, radial build menu, gold, tower placement
 - [x] **M3** — Targeting, projectiles, damage, death, bounty
-- [ ] **M4** — WaveManager, auto wave flow, win/lose screens
+- [x] **M4** — WaveManager, automatic wave flow, early-call bonus, win/lose screens
 - [ ] **M5** — Upgrades L1→L3 + 2 branches + sell
 - [ ] **M6** — Effects pass: particles, damage numbers, screen shake, SFX
 - [ ] **M7** — In-editor level editor tool (click to place path + plots, save `.tres`)
@@ -120,7 +131,7 @@ Set per tower via `targeting_mode` in its `.tres`.
 | Click a tower button | Build it (greyed out if you cannot afford it) |
 | Click anywhere else | Dismiss the menu |
 | Hover a built tower | Show its attack range |
-| **SPACE** | Start the next wave |
+| **SPACE** | Call the next wave early for bonus gold |
 
 ## Running locally
 
@@ -139,4 +150,5 @@ Set per tower via `targeting_mode` in its `.tres`.
 ## Known gotchas
 
 - A full-screen `ColorRect` or `TextureRect` with the default `mouse_filter = Stop` will swallow every click before it reaches the world. All full-screen UI in this project must use `mouse_filter = Ignore`.
+- Anything that must stay interactive while `get_tree().paused` is true needs `process_mode = Always`.
 - Godot's New Project dialog appends the project name to the path. When cloning this repo first, point *Project Path* at the existing folder and ignore the "selected path is not empty" warning.
