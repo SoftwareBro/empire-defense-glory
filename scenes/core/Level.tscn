@@ -37,6 +37,8 @@ end_cap_mode = 2
 
 [node name="Projectiles" type="Node2D" parent="." groups=["projectile_root"]]
 
+[node name="FxRoot" type="Node2D" parent="." groups=["fx_root"]]
+
 [node name="BuildMenu" type="Node2D" parent="."]
 script = ExtResource("5_build_menu")
 
@@ -45,5 +47,8 @@ script = ExtResource("6_upgrade_panel")
 
 [node name="WaveManager" type="Node" parent="."]
 script = ExtResource("4_wave_manager")
+
+[node name="Camera2D" type="Camera2D" parent="." groups=["game_camera"]]
+position = Vector2(640, 360)
 
 [node name="HUD" parent="." instance=ExtResource("7_hud")]

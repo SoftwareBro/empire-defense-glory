@@ -33,10 +33,12 @@ func _ready() -> void:
 
 func _on_gold_changed(amount: int) -> void:
 	gold_label.text = "Gold: %d" % amount
+	_pop(gold_label)
 
 
 func _on_lives_changed(amount: int) -> void:
 	lives_label.text = "Lives: %d" % amount
+	_pop(lives_label)
 
 
 func _on_wave_changed(current: int, total: int) -> void:
@@ -82,3 +84,13 @@ func _show_overlay(title: String, subtitle: String) -> void:
 func _on_restart_pressed() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+
+## Small scale punch so counter changes are noticed without reading them.
+func _pop(label: Label) -> void:
+	if not is_instance_valid(label):
+		return
+	label.pivot_offset = label.size * 0.5
+	label.scale = Vector2(1.22, 1.22)
+	var tween := create_tween()
+	tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

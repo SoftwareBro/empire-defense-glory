@@ -215,10 +215,14 @@ func _fire(target: Enemy, lvl: TowerLevel) -> void:
 	if root == null:
 		return
 
+	var muzzle: Vector2 = global_position + Vector2.from_angle(_turret_angle) * MUZZLE_OFFSET
+
 	var projectile: Projectile = PROJECTILE_SCENE.instantiate()
 	projectile.setup(target, lvl)
 	root.add_child(projectile)
-	projectile.global_position = global_position + Vector2.from_angle(_turret_angle) * MUZZLE_OFFSET
+	projectile.global_position = muzzle
+
+	Fx.muzzle_flash(muzzle, lvl.projectile_color)
 
 
 ## Projectiles live under the level, not under the tower, so they keep flying

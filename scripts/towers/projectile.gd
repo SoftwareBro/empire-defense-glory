@@ -52,7 +52,11 @@ func _physics_process(delta: float) -> void:
 
 
 func _impact() -> void:
+	# Sparks fire even on a whiffed shot, so impacts always read.
+	Fx.hit_spark(global_position, color)
+
 	if splash_radius > 0.0:
+		Fx.shake(3.5, 0.18)
 		var splash_sq: float = splash_radius * splash_radius
 		for node in get_tree().get_nodes_in_group(Enemy.GROUP):
 			var enemy := node as Enemy

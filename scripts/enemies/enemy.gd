@@ -9,19 +9,23 @@ extends Area2D
 
 ## Towers find their targets through this group.
 const GROUP: StringName = &"enemies"
+## Multiplied into the sprite on hit. Values above 1.0 clamp toward white.
+const FLASH_COLOR: Color = Color(3.0, 3.0, 3.0, 1.0)
+const FLASH_TIME: float = 0.14
 
 @export var data: EnemyData
 
 var health: float = 1.0
 ## Distance travelled along the curve, in pixels. Used for "first" targeting.
 var progress: float = 0.0
-## Set below 1.0 by slow effects, above 1.0 by haste. Used from M6 onward.
+## Set below 1.0 by slow effects, above 1.0 by haste.
 var speed_multiplier: float = 1.0
 
 var _curve: Curve2D
 var _path_transform: Transform2D = Transform2D.IDENTITY
 var _path_length: float = 0.0
 var _is_dead: bool = false
+var _flash_tween: Tween
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var health_bar: ProgressBar = $HealthBar
@@ -87,13 +91,31 @@ func take_damage(amount: float, damage_type: String = "physical") -> void:
 		return
 
 	var resist: float = data.magic_resist if damage_type == "magic" else data.physical_resist
-	health -= amount * (1.0 - resist)
+	var dealt: float = amount * (1.0 - resist)
+	health -= dealt
 
 	health_bar.visible = true
 	health_bar.value = health
 
-	if health <= 0.0:
+	var killed: bool = health <= 0.0
+	# Report damage actually dealt, not damage rolled, so armour reads clearly.
+	Fx.damage_number(global_position, dealt, damage_type, killed)
+
+	if killed:
 		_die()
+	else:
+		_flash()
+
+
+func _flash() -> void:
+	if not is_instance_valid(sprite):
+		return
+	if _flash_tween != null and _flash_tween.is_valid():
+		_flash_tween.kill()
+
+	sprite.modulate = FLASH_COLOR
+	_flash_tween = create_tween()
+	_flash_tween.tween_property(sprite, "modulate", Color.WHITE, FLASH_TIME)
 
 
 func _die() -> void:
@@ -101,6 +123,7 @@ func _die() -> void:
 	# Leave the group immediately so towers stop targeting a corpse. queue_free
 	# is deferred, so without this the node lingers for the rest of the frame.
 	remove_from_group(GROUP)
+	Fx.death_burst(global_position)
 	GameState.add_gold(data.bounty)
 	Events.enemy_died.emit(self, data.bounty)
 	queue_free()
@@ -109,6 +132,8 @@ func _die() -> void:
 func _leak() -> void:
 	_is_dead = true
 	remove_from_group(GROUP)
+	# The only hard punish in the game gets the only hard camera kick.
+	Fx.shake(9.0, 0.4)
 	GameState.lose_lives(data.leak_damage)
 	Events.enemy_leaked.emit(self, data.leak_damage)
 	queue_free()
