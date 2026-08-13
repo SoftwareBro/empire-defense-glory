@@ -5,14 +5,67 @@
   Authored pointing RIGHT (+X) with the pivot on the exact canvas centre
   (48,48), because Godot rotates clockwise from +X.
 
-  The crystal tip reaches x=88, i.e. 40 viewBox units past the pivot, which is
-  why mage.tres sets muzzle_offset = 27 (40 units * 0.667 px/unit).
+  The crystal tip reaches x=88, i.e. 40 viewBox units past the pivot, which
+  is why mage.tres sets muzzle_offset = 27 (40 units * 0.667 px per unit).
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 96 96">
 	<defs>
 		<linearGradient id="armG" x1="0" y1="0" x2="0" y2="1">
 			<stop offset="0" stop-color="#8E77BE"/>
 			<stop offset="0.45" stop-color="#5E4A8E"/>
-			<stop offset="1" stop-color="#31255ategy"/>
+			<stop offset="1" stop-color="#31255A"/>
 		</linearGradient>
-		<linearGradient id="crystalG" x1="0.1" y1="0" x
+		<linearGradient id="crystalG" x1="0.15" y1="0" x2="0.85" y2="1">
+			<stop offset="0" stop-color="#F3E9FF"/>
+			<stop offset="0.35" stop-color="#C9A6FF"/>
+			<stop offset="0.75" stop-color="#8A5FD6"/>
+			<stop offset="1" stop-color="#542F96"/>
+		</linearGradient>
+		<radialGradient id="orbGlow" cx="0.5" cy="0.5" r="0.5">
+			<stop offset="0" stop-color="#E2CBFF" stop-opacity="0.85"/>
+			<stop offset="0.55" stop-color="#A96BF0" stop-opacity="0.35"/>
+			<stop offset="1" stop-color="#7B3FD4" stop-opacity="0"/>
+		</radialGradient>
+	</defs>
+
+	<!-- Contact shadow, offset down-right to match the top-left key light. -->
+	<ellipse cx="52" cy="51" rx="28" ry="11" fill="#1B1410" opacity="0.24"/>
+
+	<!-- Channelling arm. -->
+	<path d="M 32 43.5 Q 28 48 32 52.5 L 66 50.5 Q 69 48 66 45.5 Z" fill="url(#armG)" stroke="#211A16" stroke-width="2.2" stroke-linejoin="round"/>
+	<line x1="33" y1="45.4" x2="65" y2="46.8" stroke="#B79FE4" stroke-width="1.4" opacity="0.6"/>
+
+	<!-- Counterweight rune stone at the back. -->
+	<path d="M 32 41 L 26 48 L 32 55 L 36.5 48 Z" fill="#6E5A99" stroke="#211A16" stroke-width="1.7" stroke-linejoin="round"/>
+	<circle cx="31.5" cy="48" r="1.8" fill="#DCC4FF"/>
+
+	<!-- Claw prongs cradling the crystal. -->
+	<g fill="#4A3B6E" stroke="#211A16" stroke-width="1.8" stroke-linejoin="round">
+		<path d="M 61 37.5 L 75 43 L 69.5 47 L 59 44.5 Z"/>
+		<path d="M 61 58.5 L 75 53 L 69.5 49 L 59 51.5 Z"/>
+	</g>
+	<g stroke="#A98CDB" stroke-width="1.1" stroke-linecap="round" opacity="0.7">
+		<line x1="62.5" y1="39.6" x2="72.5" y2="43.6"/>
+		<line x1="62.5" y1="56.4" x2="72.5" y2="52.4"/>
+	</g>
+
+	<!-- Focus crystal: halo, faceted body, lit and shadowed faces. -->
+	<circle cx="77" cy="48" r="14" fill="url(#orbGlow)"/>
+	<path d="M 77 35 L 88 48 L 77 61 L 68 48 Z" fill="url(#crystalG)" stroke="#211A16" stroke-width="2" stroke-linejoin="round"/>
+	<path d="M 77 35 L 68 48 L 77 48 Z" fill="#F6EEFF" opacity="0.5"/>
+	<path d="M 77 61 L 88 48 L 77 48 Z" fill="#3F2277" opacity="0.35"/>
+	<path d="M 77 35 L 77 61" stroke="#F3E9FF" stroke-width="1" opacity="0.55"/>
+	<circle cx="74.4" cy="43.4" r="1.7" fill="#FFFFFF" opacity="0.85"/>
+
+	<!-- Orbiting shards. -->
+	<g fill="#D9BFFF" stroke="#211A16" stroke-width="1" stroke-linejoin="round">
+		<path d="M 63 28 L 66 32.5 L 63 37 L 60 32.5 Z"/>
+		<path d="M 63 59 L 66 63.5 L 63 68 L 60 63.5 Z"/>
+	</g>
+
+	<!-- Swivel collar, drawn last so it caps the arm. -->
+	<circle cx="48" cy="48" r="7.6" fill="#211A16"/>
+	<circle cx="48" cy="48" r="6.4" fill="#6B5796"/>
+	<circle cx="48" cy="48" r="3" fill="#C9A6FF" opacity="0.9"/>
+	<path d="M 43.6 43.6 A 6.4 6.4 0 0 1 52.4 43.6" fill="none" stroke="#E6D6FF" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+</svg>
