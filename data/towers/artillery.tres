@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
+[ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
+
+[sub_resource type="Resource" id="TowerLevel_1"]
+script = ExtResource("2_tower_level")
+damage = 45.0
+attack_range = 210.0
+fire_rate = 0.4
+damage_type = "physical"
+upgrade_cost = 0
+sprite_scale = 1.0
+
+[sub_resource type="Resource" id="TowerLevel_2"]
+script = ExtResource("2_tower_level")
+damage = 70.0
+attack_range = 220.0
+fire_rate = 0.45
+damage_type = "physical"
+upgrade_cost = 160
+sprite_scale = 1.05
+
+[sub_resource type="Resource" id="TowerLevel_3"]
+script = ExtResource("2_tower_level")
+damage = 100.0
+attack_range = 232.0
+fire_rate = 0.5
+damage_type = "physical"
+upgrade_cost = 230
+sprite_scale = 1.1
+
+[sub_resource type="Resource" id="TowerLevel_A"]
+script = ExtResource("2_tower_level")
+damage = 160.0
+attack_range = 250.0
+fire_rate = 0.5
+damage_type = "physical"
+upgrade_cost = 450
+sprite_scale = 1.25
+
+[sub_resource type="Resource" id="TowerLevel_B"]
+script = ExtResource("2_tower_level")
+damage = 95.0
+attack_range = 240.0
+fire_rate = 0.9
+damage_type = "magic"
+upgrade_cost = 450
+sprite_scale = 1.25
+
+[resource]
+script = ExtResource("1_tower_data")
+id = &"artillery"
+display_name = "Artillery"
+short_name = "Artillery"
+build_cost = 125
+accent_color = Color(0.85098, 0.447059, 0.247059, 1)
+levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
+branch_a = SubResource("TowerLevel_A")
+branch_a_name = "Cannon"
+branch_b = SubResource("TowerLevel_B")
+branch_b_name = "Tesla"

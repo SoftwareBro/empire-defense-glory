@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
+[ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
+
+[sub_resource type="Resource" id="TowerLevel_1"]
+script = ExtResource("2_tower_level")
+damage = 10.0
+attack_range = 170.0
+fire_rate = 1.2
+damage_type = "physical"
+upgrade_cost = 0
+sprite_scale = 1.0
+
+[sub_resource type="Resource" id="TowerLevel_2"]
+script = ExtResource("2_tower_level")
+damage = 16.0
+attack_range = 185.0
+fire_rate = 1.4
+damage_type = "physical"
+upgrade_cost = 90
+sprite_scale = 1.05
+
+[sub_resource type="Resource" id="TowerLevel_3"]
+script = ExtResource("2_tower_level")
+damage = 24.0
+attack_range = 200.0
+fire_rate = 1.6
+damage_type = "physical"
+upgrade_cost = 140
+sprite_scale = 1.1
+
+[sub_resource type="Resource" id="TowerLevel_A"]
+script = ExtResource("2_tower_level")
+damage = 44.0
+attack_range = 240.0
+fire_rate = 1.6
+damage_type = "physical"
+upgrade_cost = 320
+sprite_scale = 1.2
+
+[sub_resource type="Resource" id="TowerLevel_B"]
+script = ExtResource("2_tower_level")
+damage = 18.0
+attack_range = 215.0
+fire_rate = 2.8
+damage_type = "physical"
+upgrade_cost = 320
+sprite_scale = 1.2
+
+[resource]
+script = ExtResource("1_tower_data")
+id = &"archer"
+display_name = "Archer Tower"
+short_name = "Archer"
+build_cost = 70
+accent_color = Color(0.352941, 0.701961, 0.352941, 1)
+levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
+branch_a = SubResource("TowerLevel_A")
+branch_a_name = "Sharpshooter"
+branch_b = SubResource("TowerLevel_B")
+branch_b_name = "Ranger Camp"

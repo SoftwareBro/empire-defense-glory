@@ -13,6 +13,12 @@ extends Resource
 ## Leave empty to use the Path2D drawn by hand in the scene instead.
 @export var path_points: PackedVector2Array = PackedVector2Array()
 
+@export_group("Building")
+## Fixed tower slots, Kingdom Rush style. One plot per point.
+@export var plot_points: PackedVector2Array = PackedVector2Array()
+## Array of TowerData offered in this level's build menu.
+@export var available_towers: Array = []
+
 @export_group("Economy")
 @export var starting_gold: int = 200
 @export var starting_lives: int = 20

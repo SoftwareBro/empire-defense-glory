@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/level.gd" id="1_level"]
 [ext_resource type="Resource" path="res://data/levels/m1_v1.tres" id="2_data"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/EnemyBase.tscn" id="3_enemy"]
-[ext_resource type="PackedScene" path="res://scenes/core/HUD.tscn" id="4_hud"]
+[ext_resource type="Script" path="res://scripts/ui/build_menu.gd" id="4_build_menu"]
+[ext_resource type="PackedScene" path="res://scenes/core/HUD.tscn" id="5_hud"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_level")
@@ -27,6 +28,11 @@ end_cap_mode = 2
 
 [node name="Path2D" type="Path2D" parent="."]
 
+[node name="Plots" type="Node2D" parent="."]
+
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="HUD" parent="." instance=ExtResource("4_hud")]
+[node name="BuildMenu" type="Node2D" parent="."]
+script = ExtResource("4_build_menu")
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]

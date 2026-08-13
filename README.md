@@ -4,7 +4,7 @@ A Kingdom Rush–style 2D tower defense game.
 
 | | |
 |---|---|
-| **Engine** | Godot 4.5 (standard build, GDScript) |
+| **Engine** | Godot 4 (standard build, GDScript) |
 | **Renderer** | Compatibility (required for web export) |
 | **Target** | Web browser / itch.io |
 | **Base resolution** | 1280×720, stretch mode `canvas_items`, aspect `expand` |
@@ -22,12 +22,12 @@ A Kingdom Rush–style 2D tower defense game.
 
 ### Towers
 
-| Tower | Role | Branch A | Branch B |
-|---|---|---|---|
-| Archer | Fast single-target physical | Sharpshooter (crit, pierce) | Ranger Camp (multishot, poison arrows) |
-| Barracks | Blocks the path, melee soldiers | Knights (tanky, taunt) | Assassins (evasion, execute) |
-| Mage | Magic damage, ignores armor | Arcane Wizard (chain bolt) | Sorcerer (polymorph, curse) |
-| Artillery | Slow AoE | Cannon (big splash, stun) | Tesla (chain lightning, burn) |
+| Tower | Cost | Role | Branch A | Branch B |
+|---|---|---|---|---|
+| Archer | 70 | Fast single-target physical | Sharpshooter (crit, pierce) | Ranger Camp (multishot, poison) |
+| Barracks | 60 | Blocks the path, melee soldiers | Knights (tanky, taunt) | Assassins (evasion, execute) |
+| Mage | 100 | Magic damage, ignores armor | Arcane Wizard (chain bolt) | Sorcerer (polymorph, curse) |
+| Artillery | 125 | Slow AoE | Cannon (splash, stun) | Tesla (chain lightning, burn) |
 
 ### Enemies
 
@@ -51,34 +51,38 @@ Towers, enemies, waves, and levels are all `.tres` Resource files. Adding level 
 ```
 res://
 ├─ scenes/
-│  ├─ core/     Main.tscn  Level.tscn  HUD.tscn
-│  ├─ towers/   TowerBase.tscn  Projectile.tscn  BuildPlot.tscn
-│  ├─ enemies/  EnemyBase.tscn
-│  └─ fx/       Explosion.tscn  DamageNumber.tscn
+│  ├─ core/     Level.tscn  HUD.tscn
+│  ├─ towers/   TowerBase.tscn  BuildPlot.tscn
+│  └─ enemies/  EnemyBase.tscn
 ├─ scripts/
-│  ├─ autoload/ GameState.gd  WaveManager.gd  Events.gd
-│  ├─ towers/
-│  ├─ enemies/
-│  └─ resources/  TowerData.gd  EnemyData.gd  LevelData.gd  WaveData.gd
+│  ├─ autoload/   Events.gd  GameState.gd
+│  ├─ core/       level.gd  hud.gd
+│  ├─ towers/     tower.gd  build_plot.gd
+│  ├─ enemies/    enemy.gd
+│  ├─ ui/         build_menu.gd
+│  └─ resources/  tower_data.gd  tower_level.gd
+│                  enemy_data.gd  level_data.gd
+│                  wave_data.gd   wave_entry.gd
 ├─ data/
-│  ├─ towers/   archer.tres  barracks.tres  mage.tres  artillery.tres
-│  ├─ enemies/  grunt.tres … boss.tres
-│  └─ levels/   m1_v1.tres … m3_v10.tres
+│  ├─ towers/   archer  barracks  mage  artillery
+│  ├─ enemies/  grunt … boss
+│  └─ levels/   m1_v1 … m3_v10
 ├─ art/
-│  ├─ maps/  towers/  enemies/  fx/  ui/
 └─ audio/
 ```
 
-**Map construction:** no TileMap. Each level is one hand-painted background `Sprite2D` + a `Path2D` (enemy route) + `BuildPlot` markers. A level variation = same biome art, different path points, plots, and waves.
+**Map construction:** no TileMap. Each level is one hand-painted background `Sprite2D` + a route sampled from `path_points` + `BuildPlot` markers spawned from `plot_points`. A level variation = same biome art, different points and waves.
+
+**Decoupling:** every system talks through the `Events` signal bus. Towers never reference the HUD, the HUD never references enemies.
 
 ---
 
 ## Milestones
 
 - [x] **M0** — Repo, gitignore, project settings
-- [ ] **M1** — Background + Path2D + one enemy walks the route + lives counter
-- [ ] **M2** — Build plots, build menu, gold, tower placement
-- [ ] **M3** — Targeting, projectiles, damage, death, gold reward
+- [x] **M1** — Route + walking enemy + lives counter
+- [x] **M2** — Build plots, radial build menu, gold, tower placement
+- [ ] **M3** — Targeting, projectiles, damage, death, bounty
 - [ ] **M4** — WaveManager, wave counter, win/lose
 - [ ] **M5** — Upgrades L1→L3 + 2 branches + sell
 - [ ] **M6** — Effects pass: particles, damage numbers, screen shake, SFX
@@ -87,9 +91,19 @@ res://
 
 ---
 
+## Controls
+
+| Input | Action |
+|---|---|
+| Click an empty plot | Open the radial build menu |
+| Click a tower button | Build it (greyed out if you cannot afford it) |
+| Click anywhere else | Dismiss the menu |
+| Hover a built tower | Show its attack range |
+| **SPACE** | Start the next wave |
+
 ## Running locally
 
-1. Install [Godot 4.5](https://godotengine.org/download) — **standard** build, not .NET
+1. Install [Godot 4](https://godotengine.org/download) — **standard** build, not .NET
 2. `git clone https://github.com/SoftwareBro/empire-defense-glory.git`
 3. Godot → Import → select `project.godot`
 4. Press **F5**

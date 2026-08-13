@@ -3,13 +3,17 @@ extends Node2D
 
 ## One playable level. All content comes from `data`; this script is the system.
 
+const BUILD_PLOT_SCENE: PackedScene = preload("res://scenes/towers/BuildPlot.tscn")
+
 @export var data: LevelData
 @export var enemy_scene: PackedScene
 
 @onready var background: Sprite2D = $Background
 @onready var path: Path2D = $Path2D
 @onready var path_line: Line2D = $PathLine
+@onready var plots: Node2D = $Plots
 @onready var enemies: Node2D = $Enemies
+@onready var build_menu: BuildMenu = $BuildMenu
 
 var _wave_index: int = 0
 
@@ -33,13 +37,32 @@ func _ready() -> void:
 	if path.curve != null:
 		path_line.points = path.curve.get_baked_points()
 
+	_spawn_plots()
+
 	GameState.setup(data)
 	Events.level_lost.connect(_on_level_lost)
+
+
+func _spawn_plots() -> void:
+	for point in data.plot_points:
+		var plot: BuildPlot = BUILD_PLOT_SCENE.instantiate()
+		plot.position = point
+		plot.pressed.connect(_on_plot_pressed)
+		plots.add_child(plot)
+
+
+func _on_plot_pressed(plot: BuildPlot) -> void:
+	build_menu.open(plot, data.available_towers)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		start_next_wave()
+		return
+
+	# Any click that was not caught by a plot or a menu button dismisses the menu.
+	if event is InputEventMouseButton and event.pressed:
+		build_menu.close()
 
 
 func start_next_wave() -> void:

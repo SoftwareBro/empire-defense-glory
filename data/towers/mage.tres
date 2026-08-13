@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
+[ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
+
+[sub_resource type="Resource" id="TowerLevel_1"]
+script = ExtResource("2_tower_level")
+damage = 22.0
+attack_range = 150.0
+fire_rate = 0.7
+damage_type = "magic"
+upgrade_cost = 0
+sprite_scale = 1.0
+
+[sub_resource type="Resource" id="TowerLevel_2"]
+script = ExtResource("2_tower_level")
+damage = 34.0
+attack_range = 160.0
+fire_rate = 0.8
+damage_type = "magic"
+upgrade_cost = 130
+sprite_scale = 1.05
+
+[sub_resource type="Resource" id="TowerLevel_3"]
+script = ExtResource("2_tower_level")
+damage = 50.0
+attack_range = 172.0
+fire_rate = 0.9
+damage_type = "magic"
+upgrade_cost = 190
+sprite_scale = 1.1
+
+[sub_resource type="Resource" id="TowerLevel_A"]
+script = ExtResource("2_tower_level")
+damage = 78.0
+attack_range = 185.0
+fire_rate = 0.9
+damage_type = "magic"
+upgrade_cost = 400
+sprite_scale = 1.2
+
+[sub_resource type="Resource" id="TowerLevel_B"]
+script = ExtResource("2_tower_level")
+damage = 58.0
+attack_range = 200.0
+fire_rate = 1.1
+damage_type = "magic"
+upgrade_cost = 400
+sprite_scale = 1.2
+
+[resource]
+script = ExtResource("1_tower_data")
+id = &"mage"
+display_name = "Mage Tower"
+short_name = "Mage"
+build_cost = 100
+accent_color = Color(0.603922, 0.4, 0.85098, 1)
+levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
+branch_a = SubResource("TowerLevel_A")
+branch_a_name = "Arcane Wizard"
+branch_b = SubResource("TowerLevel_B")
+branch_b_name = "Sorcerer"

@@ -1,9 +1,13 @@
-[gd_resource type="Resource" script_class="LevelData" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="LevelData" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/level_data.gd" id="1_level_data"]
 [ext_resource type="Script" path="res://scripts/resources/wave_data.gd" id="2_wave_data"]
 [ext_resource type="Script" path="res://scripts/resources/wave_entry.gd" id="3_wave_entry"]
 [ext_resource type="Resource" path="res://data/enemies/grunt.tres" id="4_grunt"]
+[ext_resource type="Resource" path="res://data/towers/archer.tres" id="5_archer"]
+[ext_resource type="Resource" path="res://data/towers/barracks.tres" id="6_barracks"]
+[ext_resource type="Resource" path="res://data/towers/mage.tres" id="7_mage"]
+[ext_resource type="Resource" path="res://data/towers/artillery.tres" id="8_artillery"]
 
 [sub_resource type="Resource" id="WaveEntry_1"]
 script = ExtResource("3_wave_entry")
@@ -21,6 +25,8 @@ delay_before = 2.0
 script = ExtResource("1_level_data")
 display_name = "Greenwood Pass — Variant 1"
 path_points = PackedVector2Array(-40, 360, 200, 360, 320, 180, 560, 180, 700, 420, 940, 420, 1060, 260, 1320, 260)
+plot_points = PackedVector2Array(180, 265, 280, 455, 440, 270, 620, 470, 760, 230, 900, 530, 1080, 380, 1150, 165)
+available_towers = [ExtResource("5_archer"), ExtResource("6_barracks"), ExtResource("7_mage"), ExtResource("8_artillery")]
 starting_gold = 200
 starting_lives = 20
 waves = [SubResource("WaveData_1")]

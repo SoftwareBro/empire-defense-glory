@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
+[ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
+
+[sub_resource type="Resource" id="TowerLevel_1"]
+script = ExtResource("2_tower_level")
+damage = 8.0
+attack_range = 95.0
+fire_rate = 1.0
+damage_type = "physical"
+upgrade_cost = 0
+sprite_scale = 1.0
+
+[sub_resource type="Resource" id="TowerLevel_2"]
+script = ExtResource("2_tower_level")
+damage = 12.0
+attack_range = 100.0
+fire_rate = 1.1
+damage_type = "physical"
+upgrade_cost = 80
+sprite_scale = 1.05
+
+[sub_resource type="Resource" id="TowerLevel_3"]
+script = ExtResource("2_tower_level")
+damage = 18.0
+attack_range = 105.0
+fire_rate = 1.2
+damage_type = "physical"
+upgrade_cost = 130
+sprite_scale = 1.1
+
+[sub_resource type="Resource" id="TowerLevel_A"]
+script = ExtResource("2_tower_level")
+damage = 26.0
+attack_range = 110.0
+fire_rate = 1.2
+damage_type = "physical"
+upgrade_cost = 300
+sprite_scale = 1.2
+
+[sub_resource type="Resource" id="TowerLevel_B"]
+script = ExtResource("2_tower_level")
+damage = 34.0
+attack_range = 110.0
+fire_rate = 1.5
+damage_type = "physical"
+upgrade_cost = 300
+sprite_scale = 1.2
+
+[resource]
+script = ExtResource("1_tower_data")
+id = &"barracks"
+display_name = "Barracks"
+short_name = "Barracks"
+build_cost = 60
+accent_color = Color(0.447059, 0.552941, 0.752941, 1)
+levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]
+branch_a = SubResource("TowerLevel_A")
+branch_a_name = "Knights"
+branch_b = SubResource("TowerLevel_B")
+branch_b_name = "Assassins"

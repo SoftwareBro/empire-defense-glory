@@ -27,6 +27,6 @@ text = "Wave: 0 / 0"
 [node name="HintLabel" type="Label" parent="."]
 offset_left = 16.0
 offset_top = 672.0
-offset_right = 700.0
+offset_right = 900.0
 offset_bottom = 700.0
-text = "Press SPACE to start the next wave"
+text = "Click a build plot to place a tower  ·  SPACE to start the next wave"
