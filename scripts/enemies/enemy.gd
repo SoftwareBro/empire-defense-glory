@@ -65,6 +65,22 @@ func is_dead() -> bool:
 	return _is_dead
 
 
+## Where this enemy will be in `seconds`, assuming it keeps walking the route
+## at its current speed. Weapons with real travel time — mortar shells above
+## all — aim here instead of at the current position, so a slow shell lands on
+## the target rather than politely behind it.
+##
+## Because this reads the curve rather than extrapolating a straight line, the
+## lead stays correct through corners, which is where a naive velocity guess
+## sends every shell into the scenery.
+func predict_position(seconds: float) -> Vector2:
+	if _curve == null or _path_length <= 0.0:
+		return global_position
+
+	var future: float = progress + data.speed * speed_multiplier * maxf(seconds, 0.0)
+	return _path_transform * _curve.sample_baked(minf(future, _path_length))
+
+
 func _physics_process(delta: float) -> void:
 	if _is_dead or _curve == null or _path_length <= 0.0:
 		return
