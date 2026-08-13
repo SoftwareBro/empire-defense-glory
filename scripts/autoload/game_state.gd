@@ -46,3 +46,11 @@ func lose_lives(amount: int) -> void:
 	if lives == 0:
 		is_game_over = true
 		Events.level_lost.emit()
+
+
+## Called by WaveManager once every wave is spawned and the map is clear.
+func win_level() -> void:
+	if is_game_over:
+		return
+	is_game_over = true
+	Events.level_won.emit()

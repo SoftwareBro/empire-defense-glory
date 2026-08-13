@@ -14,8 +14,7 @@ const BUILD_PLOT_SCENE: PackedScene = preload("res://scenes/towers/BuildPlot.tsc
 @onready var plots: Node2D = $Plots
 @onready var enemies: Node2D = $Enemies
 @onready var build_menu: BuildMenu = $BuildMenu
-
-var _wave_index: int = 0
+@onready var wave_manager: WaveManager = $WaveManager
 
 
 func _ready() -> void:
@@ -39,8 +38,11 @@ func _ready() -> void:
 
 	_spawn_plots()
 
+	# Economy first, so the HUD shows real numbers before the countdown ticks.
 	GameState.setup(data)
-	Events.level_lost.connect(_on_level_lost)
+
+	wave_manager.setup(data.waves, spawn_enemy)
+	wave_manager.start()
 
 
 func _spawn_plots() -> void:
@@ -57,43 +59,15 @@ func _on_plot_pressed(plot: BuildPlot) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
-		start_next_wave()
+		wave_manager.call_wave_early()
 		return
 
-	# Any click that was not caught by a plot or a menu button dismisses the menu.
+	# Any click not caught by a plot or a menu button dismisses the menu.
 	if event is InputEventMouseButton and event.pressed:
 		build_menu.close()
 
 
-func start_next_wave() -> void:
-	if data == null or _wave_index >= data.waves.size():
-		return
-
-	var wave: WaveData = data.waves[_wave_index]
-	_wave_index += 1
-	GameState.current_wave = _wave_index
-	Events.wave_changed.emit(_wave_index, data.waves.size())
-
-	# Each entry runs as its own coroutine so groups spawn concurrently.
-	for entry in wave.entries:
-		_run_entry(entry)
-
-
-func _run_entry(entry: WaveEntry) -> void:
-	if entry == null:
-		return
-
-	if entry.start_delay > 0.0:
-		await get_tree().create_timer(entry.start_delay).timeout
-
-	for i in entry.count:
-		if not is_inside_tree():
-			return
-		spawn_enemy(entry.enemy)
-		if i < entry.count - 1:
-			await get_tree().create_timer(entry.interval).timeout
-
-
+## Passed to WaveManager as a Callable so waves never touch enemy scenes.
 func spawn_enemy(enemy_data: EnemyData) -> void:
 	if enemy_data == null or enemy_scene == null:
 		return
@@ -102,7 +76,3 @@ func spawn_enemy(enemy_data: EnemyData) -> void:
 	enemy.setup(enemy_data, path)
 	enemies.add_child(enemy)
 	Events.enemy_spawned.emit(enemy)
-
-
-func _on_level_lost() -> void:
-	print("Level lost — all lives gone.")

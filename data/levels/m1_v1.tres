@@ -19,7 +19,7 @@ start_delay = 0.0
 [sub_resource type="Resource" id="WaveData_1"]
 script = ExtResource("2_wave_data")
 entries = [SubResource("WaveEntry_1")]
-delay_before = 2.0
+delay_before = 12.0
 
 [sub_resource type="Resource" id="WaveEntry_2"]
 script = ExtResource("3_wave_entry")
@@ -31,7 +31,7 @@ start_delay = 0.0
 [sub_resource type="Resource" id="WaveData_2"]
 script = ExtResource("2_wave_data")
 entries = [SubResource("WaveEntry_2")]
-delay_before = 3.0
+delay_before = 10.0
 
 [sub_resource type="Resource" id="WaveEntry_3A"]
 script = ExtResource("3_wave_entry")
@@ -50,7 +50,7 @@ start_delay = 4.0
 [sub_resource type="Resource" id="WaveData_3"]
 script = ExtResource("2_wave_data")
 entries = [SubResource("WaveEntry_3A"), SubResource("WaveEntry_3B")]
-delay_before = 3.0
+delay_before = 10.0
 
 [resource]
 script = ExtResource("1_level_data")
