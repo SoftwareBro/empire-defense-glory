@@ -22,15 +22,9 @@ extends Resource
 ## Ground-only towers (barracks, artillery) cannot shoot flyers.
 @export var can_hit_flying: bool = true
 
-## Array of TowerLevel. Index 0 is level 1.
+## Array of TowerLevel. Index 0 is level 1. The last entry is the tower's
+## ceiling — there is no branching tier past it.
 @export var levels: Array = []
-
-@export_group("Specializations")
-## Unlocked once the tower reaches max level. Pick one, permanently.
-@export var branch_a: TowerLevel
-@export var branch_a_name: String = ""
-@export var branch_b: TowerLevel
-@export var branch_b_name: String = ""
 
 
 func max_level_index() -> int:

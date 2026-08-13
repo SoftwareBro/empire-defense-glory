@@ -2,8 +2,8 @@ class_name UpgradePanel
 extends Node2D
 
 ## Opens on a built tower. Shows current stats, the next rung with a before/after
-## preview, the two specializations once the ladder is topped out, and sell.
-## Every number is read live from the tower's TowerData — nothing is hardcoded.
+## preview, and sell. Every number is read live from the tower's TowerData —
+## nothing is hardcoded.
 
 const PANEL_WIDTH: float = 264.0
 ## Panels flip to the tower's left past this x so they never run off screen.
@@ -78,10 +78,6 @@ func _rebuild() -> void:
 		upgrade_button.disabled = not GameState.can_afford(cost)
 		upgrade_button.pressed.connect(_on_upgrade_pressed)
 		box.add_child(upgrade_button)
-	elif _tower.can_specialize():
-		_add_label(box, "Choose one — permanent:", 13)
-		_add_branch_button(box, &"a", _tower.data.branch_a_name, _tower.data.branch_a)
-		_add_branch_button(box, &"b", _tower.data.branch_b_name, _tower.data.branch_b)
 	else:
 		_add_label(box, "Fully upgraded.", 13)
 
@@ -97,16 +93,6 @@ func _add_label(box: VBoxContainer, text: String, font_size: int) -> void:
 	label.add_theme_font_size_override("font_size", font_size)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(label)
-
-
-func _add_branch_button(box: VBoxContainer, which: StringName, label: String, level: TowerLevel) -> void:
-	if level == null:
-		return
-	var button := Button.new()
-	button.text = "%s   ·   %d g" % [label, level.upgrade_cost]
-	button.disabled = not GameState.can_afford(level.upgrade_cost)
-	button.pressed.connect(_on_branch_pressed.bind(which))
-	box.add_child(button)
 
 
 func _stat_line(level: TowerLevel) -> String:
@@ -131,20 +117,6 @@ func _on_upgrade_pressed() -> void:
 		return
 	_tower.upgrade()
 	# Stay open so upgrades can be chained without re-clicking.
-	_rebuild()
-
-
-func _on_branch_pressed(which: StringName) -> void:
-	if _tower == null or not _tower.can_specialize():
-		return
-
-	var level: TowerLevel = _tower.data.branch_a if which == &"a" else _tower.data.branch_b
-	if level == null:
-		return
-	if not GameState.spend_gold(level.upgrade_cost):
-		return
-
-	_tower.specialize(which)
 	_rebuild()
 
 
