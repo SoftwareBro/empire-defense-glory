@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/level_data.gd" id="1_level_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_data.gd" id="2_wave_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_entry.gd" id="3_wave_entry"]
+[ext_resource type="Resource" path="res://data/enemies/grunt.tres" id="4_grunt"]
+
+[sub_resource type="Resource" id="WaveEntry_1"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 5
+interval = 1.0
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_1"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_1")]
+delay_before = 2.0
+
+[resource]
+script = ExtResource("1_level_data")
+display_name = "Greenwood Pass — Variant 1"
+path_points = PackedVector2Array(-40, 360, 200, 360, 320, 180, 560, 180, 700, 420, 940, 420, 1060, 260, 1320, 260)
+starting_gold = 200
+starting_lives = 20
+waves = [SubResource("WaveData_1")]

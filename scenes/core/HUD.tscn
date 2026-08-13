@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/hud.gd" id="1_hud"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 560.0
+offset_bottom = 44.0
+theme_override_constants/separation = 40
+
+[node name="GoldLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+text = "Gold: 0"
+
+[node name="LivesLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+text = "Lives: 0"
+
+[node name="WaveLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+text = "Wave: 0 / 0"
+
+[node name="HintLabel" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 672.0
+offset_right = 700.0
+offset_bottom = 700.0
+text = "Press SPACE to start the next wave"

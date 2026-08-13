@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="1_enemy_data"]
+
+[resource]
+script = ExtResource("1_enemy_data")
+id = &"grunt"
+display_name = "Grunt"
+max_health = 100.0
+speed = 90.0
+bounty = 5
+leak_damage = 1
+armor_type = "none"
+physical_resist = 0.0
+magic_resist = 0.0
+is_flying = false
+is_boss = false
+sprite_scale = 0.25
