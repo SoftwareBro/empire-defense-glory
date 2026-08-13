@@ -1,0 +1,94 @@
+[gd_resource type="Resource" script_class="CampaignData" load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/campaign_data.gd" id="1_campaign_data"]
+[ext_resource type="Script" path="res://scripts/resources/campaign_node.gd" id="2_campaign_node"]
+[ext_resource type="Resource" path="res://data/levels/m1_v1.tres" id="3_m1_v1"]
+[ext_resource type="Resource" path="res://data/levels/m1_v2.tres" id="4_m1_v2"]
+[ext_resource type="Resource" path="res://data/levels/m1_v3.tres" id="5_m1_v3"]
+
+[sub_resource type="Resource" id="Node_01"]
+script = ExtResource("2_campaign_node")
+id = &"m1_v1"
+display_name = "Greenwood Pass I"
+map_label = "Greenwood I"
+level = ExtResource("3_m1_v1")
+map_position = Vector2(160, 545)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_02"]
+script = ExtResource("2_campaign_node")
+id = &"m1_v2"
+display_name = "Greenwood Pass II"
+map_label = "Greenwood II"
+level = ExtResource("4_m1_v2")
+map_position = Vector2(300, 462)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_03"]
+script = ExtResource("2_campaign_node")
+id = &"m1_v3"
+display_name = "Greenwood Pass III"
+map_label = "Greenwood III"
+level = ExtResource("5_m1_v3")
+map_position = Vector2(438, 536)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_04"]
+script = ExtResource("2_campaign_node")
+id = &"m2_v1"
+display_name = "Ashfall Ridge I"
+map_label = "Ashfall I"
+map_position = Vector2(572, 452)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_05"]
+script = ExtResource("2_campaign_node")
+id = &"m2_v2"
+display_name = "Ashfall Ridge II"
+map_label = "Ashfall II"
+map_position = Vector2(700, 372)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_06"]
+script = ExtResource("2_campaign_node")
+id = &"m2_v3"
+display_name = "Ashfall Ridge III"
+map_label = "Ashfall III"
+map_position = Vector2(826, 446)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_07"]
+script = ExtResource("2_campaign_node")
+id = &"m3_v1"
+display_name = "Frostmere Hold I"
+map_label = "Frostmere I"
+map_position = Vector2(940, 356)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_08"]
+script = ExtResource("2_campaign_node")
+id = &"m3_v2"
+display_name = "Frostmere Hold II"
+map_label = "Frostmere II"
+map_position = Vector2(1046, 262)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_09"]
+script = ExtResource("2_campaign_node")
+id = &"m3_v3"
+display_name = "Frostmere Hold III"
+map_label = "Frostmere III"
+map_position = Vector2(1150, 356)
+is_boss = false
+
+[sub_resource type="Resource" id="Node_10"]
+script = ExtResource("2_campaign_node")
+id = &"boss"
+display_name = "The Iron Throne"
+map_label = "Iron Throne"
+map_position = Vector2(1150, 152)
+is_boss = true
+
+[resource]
+script = ExtResource("1_campaign_data")
+nodes = [SubResource("Node_01"), SubResource("Node_02"), SubResource("Node_03"), SubResource("Node_04"), SubResource("Node_05"), SubResource("Node_06"), SubResource("Node_07"), SubResource("Node_08"), SubResource("Node_09"), SubResource("Node_10")]

@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/level_data.gd" id="1_level_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_data.gd" id="2_wave_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_entry.gd" id="3_wave_entry"]
+[ext_resource type="Resource" path="res://data/enemies/grunt.tres" id="4_grunt"]
+[ext_resource type="Resource" path="res://data/towers/archer.tres" id="5_archer"]
+[ext_resource type="Resource" path="res://data/towers/barracks.tres" id="6_barracks"]
+[ext_resource type="Resource" path="res://data/towers/mage.tres" id="7_mage"]
+[ext_resource type="Resource" path="res://data/towers/artillery.tres" id="8_artillery"]
+
+[sub_resource type="Resource" id="WaveEntry_1"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 8
+interval = 0.9
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_1"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_1")]
+delay_before = 12.0
+
+[sub_resource type="Resource" id="WaveEntry_2"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 12
+interval = 0.65
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_2"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_2")]
+delay_before = 10.0
+
+[sub_resource type="Resource" id="WaveEntry_3A"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 10
+interval = 0.6
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveEntry_3B"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 8
+interval = 0.4
+start_delay = 5.0
+
+[sub_resource type="Resource" id="WaveData_3"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_3A"), SubResource("WaveEntry_3B")]
+delay_before = 10.0
+
+[resource]
+script = ExtResource("1_level_data")
+display_name = "Greenwood Pass — Variant 2"
+path_points = PackedVector2Array(-40, 200, 240, 200, 360, 420, 620, 420, 740, 200, 980, 200, 1080, 460, 1320, 460)
+plot_points = PackedVector2Array(140, 330, 330, 545, 500, 300, 500, 545, 680, 545, 860, 330, 900, 90, 1210, 320, 1150, 600)
+available_towers = [ExtResource("5_archer"), ExtResource("6_barracks"), ExtResource("7_mage"), ExtResource("8_artillery")]
+starting_gold = 250
+starting_lives = 20
+waves = [SubResource("WaveData_1"), SubResource("WaveData_2"), SubResource("WaveData_3")]

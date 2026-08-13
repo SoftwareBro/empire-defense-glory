@@ -1,0 +1,75 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/level_data.gd" id="1_level_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_data.gd" id="2_wave_data"]
+[ext_resource type="Script" path="res://scripts/resources/wave_entry.gd" id="3_wave_entry"]
+[ext_resource type="Resource" path="res://data/enemies/grunt.tres" id="4_grunt"]
+[ext_resource type="Resource" path="res://data/towers/archer.tres" id="5_archer"]
+[ext_resource type="Resource" path="res://data/towers/barracks.tres" id="6_barracks"]
+[ext_resource type="Resource" path="res://data/towers/mage.tres" id="7_mage"]
+[ext_resource type="Resource" path="res://data/towers/artillery.tres" id="8_artillery"]
+
+[sub_resource type="Resource" id="WaveEntry_1"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 8
+interval = 0.8
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_1"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_1")]
+delay_before = 12.0
+
+[sub_resource type="Resource" id="WaveEntry_2"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 12
+interval = 0.6
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_2"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_2")]
+delay_before = 10.0
+
+[sub_resource type="Resource" id="WaveEntry_3"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 14
+interval = 0.5
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_3"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_3")]
+delay_before = 10.0
+
+[sub_resource type="Resource" id="WaveEntry_4A"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 12
+interval = 0.5
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveEntry_4B"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 10
+interval = 0.35
+start_delay = 4.0
+
+[sub_resource type="Resource" id="WaveData_4"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_4A"), SubResource("WaveEntry_4B")]
+delay_before = 10.0
+
+[resource]
+script = ExtResource("1_level_data")
+display_name = "Greenwood Pass — Variant 3"
+path_points = PackedVector2Array(-40, 360, 180, 360, 300, 140, 540, 140, 660, 360, 900, 360, 1020, 580, 1320, 580)
+plot_points = PackedVector2Array(120, 200, 100, 490, 420, 280, 280, 460, 600, 470, 780, 220, 790, 500, 1080, 400, 1200, 440)
+available_towers = [ExtResource("5_archer"), ExtResource("6_barracks"), ExtResource("7_mage"), ExtResource("8_artillery")]
+starting_gold = 260
+starting_lives = 20
+waves = [SubResource("WaveData_1"), SubResource("WaveData_2"), SubResource("WaveData_3"), SubResource("WaveData_4")]
