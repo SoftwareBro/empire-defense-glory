@@ -5,66 +5,66 @@
 
 [sub_resource type="Resource" id="TowerLevel_1"]
 script = ExtResource("2_tower_level")
-damage = 22.0
-attack_range = 150.0
-fire_rate = 0.7
+damage = 30.0
+attack_range = 175.0
+fire_rate = 0.8
 damage_type = "magic"
 splash_radius = 0.0
 projectile_speed = 480.0
-projectile_color = Color(0.729412, 0.521569, 0.976471, 1)
+projectile_color = Color(0.760784, 0.580392, 0.980392, 1)
 projectile_radius = 7.0
 upgrade_cost = 0
 sprite_scale = 1.0
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
-damage = 34.0
-attack_range = 160.0
-fire_rate = 0.8
+damage = 46.0
+attack_range = 188.0
+fire_rate = 0.9
 damage_type = "magic"
 splash_radius = 0.0
-projectile_speed = 500.0
-projectile_color = Color(0.729412, 0.521569, 0.976471, 1)
-projectile_radius = 8.0
+projectile_speed = 510.0
+projectile_color = Color(0.760784, 0.580392, 0.980392, 1)
+projectile_radius = 7.0
 upgrade_cost = 130
 sprite_scale = 1.05
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
-damage = 50.0
-attack_range = 172.0
-fire_rate = 0.9
+damage = 66.0
+attack_range = 200.0
+fire_rate = 1.0
 damage_type = "magic"
 splash_radius = 0.0
-projectile_speed = 520.0
-projectile_color = Color(0.803922, 0.6, 1, 1)
-projectile_radius = 9.0
+projectile_speed = 540.0
+projectile_color = Color(0.827451, 0.647059, 1, 1)
+projectile_radius = 8.0
 upgrade_cost = 190
 sprite_scale = 1.1
 
 [sub_resource type="Resource" id="TowerLevel_A"]
 script = ExtResource("2_tower_level")
-damage = 78.0
-attack_range = 185.0
-fire_rate = 0.9
+damage = 105.0
+attack_range = 215.0
+fire_rate = 1.0
 damage_type = "magic"
 splash_radius = 0.0
-projectile_speed = 560.0
-projectile_color = Color(0.545098, 0.784314, 1, 1)
+projectile_speed = 600.0
+projectile_color = Color(0.internal, 0, 0, 1)
 projectile_radius = 9.0
 upgrade_cost = 400
 sprite_scale = 1.2
 
 [sub_resource type="Resource" id="TowerLevel_B"]
 script = ExtResource("2_tower_level")
-damage = 58.0
-attack_range = 200.0
-fire_rate = 1.1
+damage = 78.0
+attack_range = 230.0
+fire_rate = 1.2
 damage_type = "magic"
-splash_radius = 45.0
-projectile_speed = 500.0
-projectile_color = Color(0.960784, 0.541176, 0.847059, 1)
-projectile_radius = 9.0
+splash_radius = 50.0
+projectile_speed = 560.0
+projectile_color = Color(0.545098, 0.34902, 0.847059, 1)
+projectile_radius = 8.0
 upgrade_cost = 400
 sprite_scale = 1.2
 

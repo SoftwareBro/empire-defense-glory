@@ -5,68 +5,68 @@
 
 [sub_resource type="Resource" id="TowerLevel_1"]
 script = ExtResource("2_tower_level")
-damage = 45.0
-attack_range = 210.0
-fire_rate = 0.4
+damage = 60.0
+attack_range = 240.0
+fire_rate = 0.45
 damage_type = "physical"
-splash_radius = 70.0
+splash_radius = 80.0
 projectile_speed = 330.0
-projectile_color = Color(0.905882, 0.529412, 0.278431, 1)
+projectile_color = Color(0.34902, 0.321569, 0.301961, 1)
 projectile_radius = 9.0
 upgrade_cost = 0
 sprite_scale = 1.0
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
-damage = 70.0
-attack_range = 220.0
-fire_rate = 0.45
+damage = 92.0
+attack_range = 252.0
+fire_rate = 0.5
 damage_type = "physical"
-splash_radius = 78.0
-projectile_speed = 340.0
-projectile_color = Color(0.905882, 0.529412, 0.278431, 1)
-projectile_radius = 10.0
+splash_radius = 88.0
+projectile_speed = 350.0
+projectile_color = Color(0.34902, 0.321569, 0.301961, 1)
+projectile_radius = 9.0
 upgrade_cost = 160
 sprite_scale = 1.05
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
-damage = 100.0
-attack_range = 232.0
-fire_rate = 0.5
+damage = 130.0
+attack_range = 265.0
+fire_rate = 0.55
 damage_type = "physical"
-splash_radius = 86.0
-projectile_speed = 350.0
-projectile_color = Color(0.94902, 0.6, 0.301961, 1)
-projectile_radius = 11.0
+splash_radius = 96.0
+projectile_speed = 370.0
+projectile_color = Color(0.290196, 0.266667, 0.25098, 1)
+projectile_radius = 10.0
 upgrade_cost = 230
 sprite_scale = 1.1
 
 [sub_resource type="Resource" id="TowerLevel_A"]
 script = ExtResource("2_tower_level")
-damage = 160.0
-attack_range = 250.0
-fire_rate = 0.5
+damage = 210.0
+attack_range = 285.0
+fire_rate = 0.55
 damage_type = "physical"
-splash_radius = 100.0
-projectile_speed = 360.0
-projectile_color = Color(0.94902, 0.443137, 0.203922, 1)
-projectile_radius = 12.0
+splash_radius = 112.0
+projectile_speed = 390.0
+projectile_color = Color(0.219608, 0.203922, 0.192157, 1)
+projectile_radius = 11.0
 upgrade_cost = 450
-sprite_scale = 1.25
+sprite_scale = 1.2
 
 [sub_resource type="Resource" id="TowerLevel_B"]
 script = ExtResource("2_tower_level")
-damage = 95.0
-attack_range = 240.0
-fire_rate = 0.9
+damage = 125.0
+attack_range = 275.0
+fire_rate = 1.0
 damage_type = "magic"
-splash_radius = 60.0
+splash_radius = 65.0
 projectile_speed = 1100.0
-projectile_color = Color(0.494118, 0.870588, 1, 1)
+projectile_color = Color(0.603922, 0.85098, 1, 1)
 projectile_radius = 7.0
 upgrade_cost = 450
-sprite_scale = 1.25
+sprite_scale = 1.2
 
 [resource]
 script = ExtResource("1_tower_data")

@@ -5,9 +5,9 @@
 
 [sub_resource type="Resource" id="TowerLevel_1"]
 script = ExtResource("2_tower_level")
-damage = 10.0
-attack_range = 170.0
-fire_rate = 1.2
+damage = 14.0
+attack_range = 200.0
+fire_rate = 1.3
 damage_type = "physical"
 splash_radius = 0.0
 projectile_speed = 720.0
@@ -18,9 +18,9 @@ sprite_scale = 1.0
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
-damage = 16.0
-attack_range = 185.0
-fire_rate = 1.4
+damage = 22.0
+attack_range = 215.0
+fire_rate = 1.5
 damage_type = "physical"
 splash_radius = 0.0
 projectile_speed = 760.0
@@ -31,9 +31,9 @@ sprite_scale = 1.05
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
-damage = 24.0
-attack_range = 200.0
-fire_rate = 1.6
+damage = 32.0
+attack_range = 230.0
+fire_rate = 1.7
 damage_type = "physical"
 splash_radius = 0.0
 projectile_speed = 800.0
@@ -44,9 +44,9 @@ sprite_scale = 1.1
 
 [sub_resource type="Resource" id="TowerLevel_A"]
 script = ExtResource("2_tower_level")
-damage = 44.0
-attack_range = 240.0
-fire_rate = 1.6
+damage = 58.0
+attack_range = 275.0
+fire_rate = 1.7
 damage_type = "physical"
 splash_radius = 0.0
 projectile_speed = 1000.0
@@ -57,9 +57,9 @@ sprite_scale = 1.2
 
 [sub_resource type="Resource" id="TowerLevel_B"]
 script = ExtResource("2_tower_level")
-damage = 18.0
-attack_range = 215.0
-fire_rate = 2.8
+damage = 24.0
+attack_range = 245.0
+fire_rate = 3.0
 damage_type = "physical"
 splash_radius = 0.0
 projectile_speed = 780.0

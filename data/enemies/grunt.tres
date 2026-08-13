@@ -6,9 +6,9 @@
 script = ExtResource("1_enemy_data")
 id = &"grunt"
 display_name = "Grunt"
-max_health = 100.0
-speed = 90.0
-bounty = 5
+max_health = 55.0
+speed = 80.0
+bounty = 8
 leak_damage = 1
 armor_type = "none"
 physical_resist = 0.0
