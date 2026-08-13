@@ -1,72 +1,70 @@
-[gd_resource type="Resource" script_class="TowerData" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="TowerData" load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/tower_data.gd" id="1_tower_data"]
 [ext_resource type="Script" path="res://scripts/resources/tower_level.gd" id="2_tower_level"]
-[ext_resource type="Texture2D" path="res://art/towers/barracks/base_l1.svg" id="3_base"]
-[ext_resource type="Texture2D" path="res://art/towers/barracks/turret_l1.svg" id="4_turret"]
-[ext_resource type="Texture2D" path="res://art/fx/javelin.svg" id="5_javelin"]
+[ext_resource type="Texture2D" path="res://art/towers/spell/base_l1.svg" id="3_base"]
+[ext_resource type="Texture2D" path="res://art/towers/spell/turret_l1.svg" id="4_turret"]
 
 [sub_resource type="Resource" id="TowerLevel_1"]
 script = ExtResource("2_tower_level")
-damage = 12.0
-attack_range = 120.0
-fire_rate = 1.1
-damage_type = "physical"
-splash_radius = 0.0
-projectile_speed = 900.0
-projectile_color = Color(0.85098, 0.890196, 0.960784, 1)
-projectile_radius = 5.0
-projectile_texture = ExtResource("5_javelin")
+damage = 150.0
+attack_range = 190.0
+fire_rate = 0.0
+damage_type = "magic"
+splash_radius = 110.0
+windup_time = 0.0
+projectile_color = Color(0.72, 0.82, 1, 1)
+recharge_time = 14.0
 upgrade_cost = 0
 texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.0
-muzzle_offset = 29.0
+muzzle_offset = 24.0
 bow_rig = false
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
-damage = 18.0
-attack_range = 128.0
-fire_rate = 1.2
-damage_type = "physical"
-splash_radius = 0.0
-projectile_speed = 900.0
-projectile_color = Color(0.85098, 0.890196, 0.960784, 1)
-projectile_radius = 5.0
-projectile_texture = ExtResource("5_javelin")
+damage = 260.0
+attack_range = 205.0
+fire_rate = 0.0
+damage_type = "magic"
+splash_radius = 120.0
+windup_time = 0.0
+projectile_color = Color(0.72, 0.82, 1, 1)
+recharge_time = 12.0
 upgrade_cost = 80
 texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.05
-muzzle_offset = 29.0
+muzzle_offset = 24.0
 bow_rig = false
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
-damage = 26.0
-attack_range = 136.0
-fire_rate = 1.3
-damage_type = "physical"
-splash_radius = 0.0
-projectile_speed = 940.0
-projectile_color = Color(0.898039, 0.929412, 0.980392, 1)
-projectile_radius = 5.0
-projectile_texture = ExtResource("5_javelin")
+damage = 420.0
+attack_range = 220.0
+fire_rate = 0.0
+damage_type = "magic"
+splash_radius = 132.0
+windup_time = 0.0
+projectile_color = Color(0.78, 0.88, 1, 1)
+recharge_time = 10.0
 upgrade_cost = 130
 texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.1
-muzzle_offset = 29.0
+muzzle_offset = 24.0
 bow_rig = false
 
 [resource]
 script = ExtResource("1_tower_data")
-id = &"barracks"
-display_name = "Barracks"
-short_name = "Barracks"
+id = &"spell"
+display_name = "Spell Tower"
+short_name = "Spell"
 build_cost = 60
 accent_color = Color(0.447059, 0.552941, 0.752941, 1)
+attack_kind = "ability"
+ability_name = "Thunderclap"
 targeting_mode = "closest"
-can_hit_flying = false
+can_hit_flying = true
 levels = [SubResource("TowerLevel_1"), SubResource("TowerLevel_2"), SubResource("TowerLevel_3")]

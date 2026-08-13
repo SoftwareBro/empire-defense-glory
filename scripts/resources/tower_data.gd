@@ -13,13 +13,24 @@ extends Resource
 ## Placeholder tint until real art lands.
 @export var accent_color: Color = Color.WHITE
 
+@export_group("Behaviour")
+## How the tower actually attacks. This selects the entire weapon model, not
+## just the art, so no tower has to pretend to be a gun:
+##   projectile — looses a homing shot that chases its target (archer)
+##   beam       — hauls power into a core, then hits instantly down a laser
+##   mortar     — lobs a shell on a high arc onto predicted ground
+##   ability    — never fires by itself. Recharges a spell the player clicks.
+@export_enum("projectile", "beam", "mortar", "ability") var attack_kind: String = "projectile"
+## Label on the activation button of an "ability" tower.
+@export var ability_name: String = "Chain Lightning"
+
 @export_group("Targeting")
 ## first    = furthest along the path (the classic tower defense default)
 ## last     = least far along, good for cleanup towers
 ## closest  = nearest to the tower
 ## strongest = highest current health
 @export_enum("first", "last", "closest", "strongest") var targeting_mode: String = "first"
-## Ground-only towers (barracks, artillery) cannot shoot flyers.
+## Ground-only towers cannot shoot flyers.
 @export var can_hit_flying: bool = true
 
 ## Array of TowerLevel. Index 0 is level 1. The last entry is the tower's
@@ -29,3 +40,9 @@ extends Resource
 
 func max_level_index() -> int:
 	return maxi(0, levels.size() - 1)
+
+
+## True for towers the player fires by hand rather than ones that pick their
+## own targets. Tower branches on this in place of a fire-rate loop.
+func is_manual() -> bool:
+	return attack_kind == "ability"
