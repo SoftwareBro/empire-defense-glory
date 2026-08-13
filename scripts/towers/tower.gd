@@ -53,12 +53,22 @@ const BOLT_STEEL_COLOR: Color = Color(0.796, 0.843, 0.878)
 const BRASS_DARK_COLOR: Color = Color(0.557, 0.392, 0.086)
 const BRASS_LIGHT_COLOR: Color = Color(0.941, 0.761, 0.373)
 
+# --- Build and upgrade juice --------------------------------------------------
+
+## Seconds the tower takes to settle onto its plot.
+const BUILD_TIME: float = 0.42
+## Scale a freshly placed tower grows from.
+const BUILD_FROM_SCALE: float = 0.35
+## Seconds the gold rank-up flare lingers after an upgrade.
+const UPGRADE_FLARE_TIME: float = 0.7
+## How hard the tower punches outward the instant it ranks up.
+const UPGRADE_PUNCH_SCALE: float = 1.28
+const UPGRADE_GOLD: Color = Color(1.0, 0.85, 0.38, 1.0)
+
 @export var data: TowerData
 
 ## Index into data.levels. 0 = level 1.
 var level_index: int = 0
-## "" while on the normal ladder, then &"a" or &"b" once specialized.
-var branch: StringName = &""
 ## Shown while hovering.
 var show_range: bool = false
 ## Held on while the upgrade panel is open.
@@ -78,6 +88,9 @@ var _sway_offset: float = 0.0
 var _drum_angle: float = 0.0
 var _drum_target: float = 0.0
 
+## Counts down after an upgrade and drives the gold rings in _draw().
+var _flare_t: float = 0.0
+
 
 func _ready() -> void:
 	if data == null:
@@ -86,25 +99,26 @@ func _ready() -> void:
 		return
 	# Stagger the idle drift so a row of towers never sways in lockstep.
 	_idle_t = randf() * 10.0
+	# _process only exists to animate the rank-up flare, so leave it off until
+	# there is a flare to animate.
+	set_process(false)
+	_play_build_animation()
 	queue_redraw()
+
+
+func _process(delta: float) -> void:
+	_flare_t = maxf(0.0, _flare_t - delta)
+	queue_redraw()
+	if _flare_t <= 0.0:
+		set_process(false)
 
 
 # --- Level model -------------------------------------------------------------
 
 func current_level() -> TowerLevel:
-	if data == null:
-		return null
-	if branch == &"a" and data.branch_a != null:
-		return data.branch_a
-	if branch == &"b" and data.branch_b != null:
-		return data.branch_b
-	if data.levels.is_empty():
+	if data == null or data.levels.is_empty():
 		return null
 	return data.levels[clampi(level_index, 0, data.levels.size() - 1)]
-
-
-func is_specialized() -> bool:
-	return branch != &""
 
 
 func is_max_level() -> bool:
@@ -112,14 +126,7 @@ func is_max_level() -> bool:
 
 
 func can_upgrade() -> bool:
-	return not is_specialized() and not is_max_level()
-
-
-## The specialization choice only appears at the top of the normal ladder.
-func can_specialize() -> bool:
-	if data == null or is_specialized() or not is_max_level():
-		return false
-	return data.branch_a != null or data.branch_b != null
+	return not is_max_level()
 
 
 func next_level() -> TowerLevel:
@@ -136,27 +143,53 @@ func upgrade_cost() -> int:
 func level_label() -> String:
 	if data == null:
 		return ""
-	if branch == &"a":
-		return data.branch_a_name
-	if branch == &"b":
-		return data.branch_b_name
+	if is_max_level():
+		return "Lv %d  ·  Max" % (level_index + 1)
 	return "Lv %d" % (level_index + 1)
 
 
 func upgrade() -> void:
 	if not can_upgrade():
 		return
+
 	level_index += 1
+
+	Fx.upgrade_flourish(global_position, data.accent_color, level_index + 1)
+	_play_upgrade_animation()
+
 	Events.tower_upgraded.emit(self, level_index + 1)
 	queue_redraw()
 
 
-func specialize(which: StringName) -> void:
-	if is_specialized():
-		return
-	branch = which
-	Events.tower_upgraded.emit(self, data.levels.size() + 1)
-	queue_redraw()
+# --- Presentation ------------------------------------------------------------
+
+## Drops the tower onto its plot: it fades in undersized and overshoots past
+## full size before settling, timed to land with Fx's dust ring.
+func _play_build_animation() -> void:
+	Fx.build_flourish(global_position, data.accent_color)
+
+	scale = Vector2(BUILD_FROM_SCALE, BUILD_FROM_SCALE)
+	# Alpha 0 with the colour pushed past white, so it resolves out of a flash.
+	modulate = Color(1.4, 1.32, 1.12, 0.0)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "scale", Vector2.ONE, BUILD_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "modulate", Color.WHITE, BUILD_TIME * 0.9)
+
+
+## A hard elastic punch, which is the whole "that just got stronger" read.
+func _play_upgrade_animation() -> void:
+	_flare_t = UPGRADE_FLARE_TIME
+	set_process(true)
+
+	scale = Vector2(UPGRADE_PUNCH_SCALE, UPGRADE_PUNCH_SCALE)
+	modulate = Color(1.65, 1.48, 1.06, 1.0)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.38).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "modulate", Color.WHITE, 0.45)
 
 
 # --- Economy -----------------------------------------------------------------
@@ -172,11 +205,6 @@ func total_invested() -> int:
 		var lvl := data.levels[i] as TowerLevel
 		if lvl != null:
 			total += lvl.upgrade_cost
-
-	if branch == &"a" and data.branch_a != null:
-		total += data.branch_a.upgrade_cost
-	elif branch == &"b" and data.branch_b != null:
-		total += data.branch_b.upgrade_cost
 
 	return total
 
@@ -242,7 +270,7 @@ func _physics_process(delta: float) -> void:
 
 
 ## Keeps the animated crossbow parts moving. Cocking is stretched to fill
-## whatever is left of the firing cycle, so a Ranger Camp reloads frantically
+## whatever is left of the firing cycle, so a fast tower reloads frantically
 ## while a level 1 tower finishes early and holds the shot.
 func _advance_bow_rig(delta: float, lvl: TowerLevel, has_target: bool) -> void:
 	var cycle: float = 1.0 / maxf(lvl.fire_rate, 0.01)
@@ -359,14 +387,45 @@ func _draw() -> void:
 		draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0 * s, Color(0.07, 0.07, 0.09, 0.95), 8.0)
 		draw_circle(Vector2.ZERO, 9.0 * s, data.accent_color.lightened(0.3))
 
-	# Rank read-out: pips while levelling, a gold ring once specialized.
-	if is_specialized():
-		draw_arc(Vector2.ZERO, 29.0 * s, 0.0, TAU, 48, Color(1.0, 0.85, 0.35, 0.95), 3.0)
-	else:
-		var pips: int = level_index + 1
-		var start_x: float = -float(pips - 1) * 5.0
-		for i in pips:
-			draw_circle(Vector2(start_x + float(i) * 10.0, -32.0 * s), 3.0, Color(1, 1, 1, 0.9))
+	_draw_rank(s)
+	_draw_upgrade_flare(s)
+
+
+## Rank read-out: one pip per level, turning gold once the tower is topped out.
+func _draw_rank(s: float) -> void:
+	var maxed: bool = is_max_level()
+	var pip_color: Color = UPGRADE_GOLD if maxed else Color(1.0, 1.0, 1.0, 0.9)
+
+	if maxed:
+		draw_arc(Vector2.ZERO, 29.0 * s, 0.0, TAU, 48, Color(UPGRADE_GOLD.r, UPGRADE_GOLD.g, UPGRADE_GOLD.b, 0.45), 1.8)
+
+	var pips: int = level_index + 1
+	var start_x: float = -float(pips - 1) * 5.0
+	for i in pips:
+		var centre := Vector2(start_x + float(i) * 10.0, -32.0 * s)
+		if maxed:
+			draw_circle(centre, 4.2, Color(0.129, 0.102, 0.086, 0.55))
+		draw_circle(centre, 3.0, pip_color)
+
+
+## Two gold rings chasing each other outward, plus a soft core glow. Drawn on
+## the tower rather than in Fx so it scales and fades with the punch animation.
+func _draw_upgrade_flare(s: float) -> void:
+	if _flare_t <= 0.0:
+		return
+
+	var t: float = 1.0 - _flare_t / UPGRADE_FLARE_TIME
+	var fade: float = 1.0 - t
+	var inner: float = 26.0 * s
+
+	for i in 2:
+		# The second ring is held back a beat so they read as a pulse, not a pair.
+		var ring_t: float = clampf(t + float(i) * 0.22, 0.0, 1.0)
+		var radius: float = inner + ring_t * 46.0 * s
+		var strength: float = fade * (1.0 - ring_t)
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(UPGRADE_GOLD.r, UPGRADE_GOLD.g, UPGRADE_GOLD.b, strength * 0.8), maxf(3.5 * (1.0 - ring_t), 0.6))
+
+	draw_circle(Vector2.ZERO, inner * (1.0 + 0.16 * fade), Color(1.0, 0.93, 0.62, fade * 0.16))
 
 
 ## Draws the parts of the crossbow that move. Called inside the turret's
