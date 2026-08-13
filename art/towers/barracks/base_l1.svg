@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Barracks - static half: a stone keep ring around a packed-dirt training yard.
+
+  Authored on a 96-unit viewBox with the pivot on the exact canvas centre
+  (48,48). Key light comes from the top-left, so every contact shadow falls
+  down-right and every highlight arc hugs the upper-left rim.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 96 96">
+	<defs>
+		<radialGradient id="keep" cx="0.34" cy="0.28" r="0.82">
+			<stop offset="0" stop-color="#D6DCE9"/>
+			<stop offset="0.5" stop-color="#98A2B8"/>
+			<stop offset="1" stop-color="#575E72"/>
+		</radialGradient>
+		<radialGradient id="yard" cx="0.36" cy="0.30" r="0.80">
+			<stop offset="0" stop-color="#D3B884"/>
+			<stop offset="0.6" stop-color="#A98C58"/>
+			<stop offset="1" stop-color="#6D5833"/>
+		</radialGradient>
+		<linearGradient id="mount" x1="0.2" y1="0.1" x2="0.8" y2="0.95">
+			<stop offset="0" stop-color="#98A6B3"/>
+			<stop offset="1" stop-color="#414B55"/>
+		</linearGradient>
+	</defs>
+
+	<ellipse cx="49" cy="53" rx="41" ry="38" fill="#1B1410" opacity="0.28"/>
+
+	<!-- Corner buttresses: same silhouette language as the archer tower. -->
+	<g fill="#8A93A4" stroke="#2B211C" stroke-width="2.2" stroke-linejoin="round">
+		<g transform="rotate(45 48 48)"><path d="M 74 38 L 89 41.5 L 89 54.5 L 74 58 Z"/></g>
+		<g transform="rotate(135 48 48)"><path d="M 74 38 L 89 41.5 L 89 54.5 L 74 58 Z"/></g>
+		<g transform="rotate(225 48 48)"><path d="M 74 38 L 89 41.5 L 89 54.5 L 74 58 Z"/></g>
+		<g transform="rotate(315 48 48)"><path d="M 74 38 L 89 41.5 L 89 54.5 L 74 58 Z"/></g>
+	</g>
+
+	<!-- Merlons. Drawn before the wall so the wall crops their inner half. -->
+	<g fill="#9BA5B6" stroke="#2B211C" stroke-width="2" stroke-linejoin="round">
+		<g transform="rotate(0 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(45 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(90 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(135 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(180 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(225 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(270 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+		<g transform="rotate(315 48 48)"><rect x="43.5" y="9" width="9" height="11" rx="1.4"/></g>
+	</g>
+
+	<circle cx="48" cy="48" r="35" fill="url(#keep)" stroke="#2B211C" stroke-width="2.6"/>
+
+	<!-- Block courses, radiating so they read as masonry joints. -->
+	<g stroke="#5C6478" stroke-width="1.3" stroke-linecap="round" opacity="0.6">
+		<line x1="74.31" y1="57.58" x2="80.42" y2="59.80"/>
+		<line x1="59.83" y1="73.38" x2="62.58" y2="79.27"/>
+		<line x1="38.42" y1="74.31" x2="36.20" y2="80.42"/>
+		<line x1="22.62" y1="59.83" x2="16.73" y2="62.58"/>
+		<line x1="21.69" y1="38.42" x2="15.58" y2="36.20"/>
+		<line x1="36.17" y1="22.62" x2="33.42" y2="16.73"/>
+		<line x1="57.58" y1="21.69" x2="59.80" y2="15.58"/>
+		<line x1="73.38" y1="36.17" x2="79.27" y2="33.42"/>
+	</g>
+
+	<path d="M 16.99 36.71 A 33 33 0 0 1 69.21 22.72" fill="none" stroke="#FFF4DC" stroke-width="2.2" stroke-linecap="round" opacity="0.38"/>
+
+	<!-- Parapet walk. -->
+	<circle cx="48" cy="48" r="27.5" fill="none" stroke="#2B211C" stroke-width="7"/>
+	<circle cx="48" cy="48" r="27.5" fill="none" stroke="#6E7A88" stroke-width="5"/>
+	<path d="M 26.33 31.06 A 27.5 27.5 0 0 1 63.77 25.47" fill="none" stroke="#C2CDD6" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+
+	<!-- Training yard. -->
+	<circle cx="48" cy="48" r="24" fill="url(#yard)" stroke="#2B211C" stroke-width="1.8"/>
+	<g stroke="#6D5833" stroke-width="1.1" opacity="0.45" stroke-linecap="round" fill="none">
+		<path d="M 31 53 Q 39 49 46 54"/>
+		<path d="M 52 37 Q 60 34 67 39"/>
+		<path d="M 36 40 Q 42 37 46 39"/>
+	</g>
+	<path d="M 68.67 55.52 A 22 22 0 0 1 31.15 62.14" fill="none" stroke="#4A3117" stroke-width="3.5" stroke-linecap="round" opacity="0.33"/>
+
+	<!-- Spear rack, bottom-left. -->
+	<g transform="rotate(-20 32 60)">
+		<rect x="24" y="58" width="16" height="4" rx="1.2" fill="#7A4B2A" stroke="#2B211C" stroke-width="1.5"/>
+		<g stroke="#2B211C" stroke-width="2.8" stroke-linecap="round">
+			<line x1="28" y1="59" x2="27" y2="47"/>
+			<line x1="32" y1="59" x2="32" y2="45.5"/>
+			<line x1="36" y1="59" x2="37" y2="47"/>
+		</g>
+		<g stroke="#B08A55" stroke-width="1.3" stroke-linecap="round">
+			<line x1="28" y1="59" x2="27" y2="47"/>
+			<line x1="32" y1="59" x2="32" y2="45.5"/>
+			<line x1="36" y1="59" x2="37" y2="47"/>
+		</g>
+		<g fill="#C2CDD6" stroke="#2B211C" stroke-width="1.1" stroke-linejoin="round">
+			<path d="M 27 47.5 L 25.8 44 L 27 40.8 L 28.2 44 Z"/>
+			<path d="M 32 46 L 30.8 42.5 L 32 39.3 L 33.2 42.5 Z"/>
+			<path d="M 37 47.5 L 35.8 44 L 37 40.8 L 38.2 44 Z"/>
+		</g>
+	</g>
+
+	<!-- Kite shield propped against the parapet, bottom-right. -->
+	<g transform="rotate(12 62 61)">
+		<path d="M 56 54 L 68 54 L 68 61 Q 62 68 56 61 Z" fill="#4E6FA8" stroke="#2B211C" stroke-width="1.8" stroke-linejoin="round"/>
+		<line x1="62" y1="54" x2="62" y2="66" stroke="#E8D189" stroke-width="1.5"/>
+		<line x1="56.4" y1="57.6" x2="67.6" y2="57.6" stroke="#E8D189" stroke-width="1.5"/>
+		<circle cx="62" cy="57.6" r="1.9" fill="#E8D189" stroke="#2B211C" stroke-width="0.9"/>
+		<path d="M 56.6 55.2 L 56.6 60.5" stroke="#A9C4EE" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+	</g>
+
+	<!-- Central swivel mount. -->
+	<circle cx="48" cy="48" r="12" fill="#2B211C"/>
+	<circle cx="48" cy="48" r="10.2" fill="url(#mount)"/>
+	<circle cx="48" cy="48" r="6.4" fill="none" stroke="#2B211C" stroke-width="1.4" opacity="0.55"/>
+	<g fill="#2B211C" opacity="0.8">
+		<circle cx="54" cy="42" r="1.5"/>
+		<circle cx="54" cy="54" r="1.5"/>
+		<circle cx="42" cy="54" r="1.5"/>
+		<circle cx="42" cy="42" r="1.5"/>
+	</g>
+	<path d="M 39.64 42.15 A 10.2 10.2 0 0 1 52.31 38.76" fill="none" stroke="#D3DCE3" stroke-width="1.8" stroke-linecap="round" opacity="0.6"/>
+</svg>
