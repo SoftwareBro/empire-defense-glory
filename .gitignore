@@ -1,0 +1,22 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot general
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Web export output (built locally, uploaded to itch.io)
+/builds/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Art working files (keep exported PNGs, ignore huge sources)
+*.psd
+*.xcf

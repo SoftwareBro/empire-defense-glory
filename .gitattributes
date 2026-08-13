@@ -1,0 +1,11 @@
+# Godot scene and resource files are text - keep them diffable
+*.tscn text eol=lf
+*.tres text eol=lf
+*.gd   text eol=lf
+*.godot text eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.ogg binary
+*.wav binary
