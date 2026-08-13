@@ -3,12 +3,13 @@
 [ext_resource type="Script" path="res://scripts/core/hud.gd" id="1_hud"]
 
 [node name="HUD" type="CanvasLayer"]
+process_mode = 3
 script = ExtResource("1_hud")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 offset_left = 16.0
 offset_top = 12.0
-offset_right = 640.0
+offset_right = 720.0
 offset_bottom = 44.0
 mouse_filter = 2
 theme_override_constants/separation = 40
@@ -25,68 +26,19 @@ text = "Lives: 0"
 unique_name_in_owner = true
 text = "Wave: 0 / 0"
 
+[node name="PauseButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 1164.0
+offset_top = 12.0
+offset_right = 1264.0
+offset_bottom = 48.0
+text = "Pause"
+
 [node name="BonusLabel" type="Label" parent="."]
 unique_name_in_owner = true
-visible = false
 offset_left = 16.0
 offset_top = 48.0
-offset_right = 640.0
+offset_right = 620.0
 offset_bottom = 76.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.847059, 0.352941, 1)
-text = ""
-
-[node name="StatusLabel" type="Label" parent="."]
-unique_name_in_owner = true
-offset_left = 16.0
-offset_top = 676.0
-offset_right = 1060.0
-offset_bottom = 704.0
-mouse_filter = 2
-text = ""
-
-[node name="Overlay" type="Control" parent="."]
-unique_name_in_owner = true
-process_mode = 3
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Dim" type="ColorRect" parent="Overlay"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.68)
-
-[node name="Panel" type="VBoxContainer" parent="Overlay"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -110.0
-offset_right = 240.0
-offset_bottom = 110.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="OverlayTitle" type="Label" parent="Overlay/Panel"]
-unique_name_in_owner = true
-theme_override_font_sizes/font_size = 48
-text = "Victory"
-horizontal_alignment = 1
-
-[node name="OverlaySubtitle" type="Label" parent="Overlay/Panel"]
-unique_name_in_owner = true
-text = ""
-horizontal_alignment = 1
-
-[node name="RestartButton" type="Button" parent="Overlay/Panel"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-text = "Restart"
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)

@@ -19,9 +19,16 @@ const BUILD_PLOT_SCENE: PackedScene = preload("res://scenes/towers/BuildPlot.tsc
 
 
 func _ready() -> void:
+	# The campaign chooses the level. The exported value is only a fallback for
+	# running this scene straight from the editor.
+	if Campaign.current_node != null and Campaign.current_node.level != null:
+		data = Campaign.current_node.level
+
 	if data == null:
 		push_error("Level has no LevelData assigned.")
 		return
+
+	Events.level_won.connect(_on_level_won)
 
 	if data.background != null:
 		background.texture = data.background
@@ -84,3 +91,7 @@ func spawn_enemy(enemy_data: EnemyData) -> void:
 	enemy.setup(enemy_data, path)
 	enemies.add_child(enemy)
 	Events.enemy_spawned.emit(enemy)
+
+
+func _on_level_won() -> void:
+	Campaign.complete_current_level(GameState.stars_earned())
