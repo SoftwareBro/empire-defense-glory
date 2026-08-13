@@ -14,6 +14,7 @@ const BUILD_PLOT_SCENE: PackedScene = preload("res://scenes/towers/BuildPlot.tsc
 @onready var plots: Node2D = $Plots
 @onready var enemies: Node2D = $Enemies
 @onready var build_menu: BuildMenu = $BuildMenu
+@onready var upgrade_panel: UpgradePanel = $UpgradePanel
 @onready var wave_manager: WaveManager = $WaveManager
 
 
@@ -53,8 +54,14 @@ func _spawn_plots() -> void:
 		plots.add_child(plot)
 
 
+## Empty plot opens the build menu; a built one opens the upgrade panel.
 func _on_plot_pressed(plot: BuildPlot) -> void:
-	build_menu.open(plot, data.available_towers)
+	if plot.is_occupied():
+		build_menu.close()
+		upgrade_panel.open(plot.tower)
+	else:
+		upgrade_panel.close()
+		build_menu.open(plot, data.available_towers)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -62,9 +69,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		wave_manager.call_wave_early()
 		return
 
-	# Any click not caught by a plot or a menu button dismisses the menu.
+	# Any click not caught by a plot or a menu button dismisses both menus.
 	if event is InputEventMouseButton and event.pressed:
 		build_menu.close()
+		upgrade_panel.close()
 
 
 ## Passed to WaveManager as a Callable so waves never touch enemy scenes.

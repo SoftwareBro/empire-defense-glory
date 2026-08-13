@@ -22,6 +22,12 @@ var _entries_running: int = 0
 var _enemies_alive: int = 0
 
 
+## Single source of truth for the bonus, so the HUD can never promise an amount
+## that differs from what the player is actually paid.
+static func early_call_bonus_for(seconds_left: float) -> int:
+	return maxi(0, ceili(seconds_left)) * EARLY_CALL_GOLD_PER_SECOND
+
+
 func setup(waves: Array, spawn_enemy: Callable) -> void:
 	_waves = waves
 	_spawn_enemy = spawn_enemy
@@ -52,7 +58,7 @@ func call_wave_early() -> void:
 	if state != State.COUNTDOWN:
 		return
 
-	var bonus: int = int(floor(_countdown)) * EARLY_CALL_GOLD_PER_SECOND
+	var bonus: int = early_call_bonus_for(_countdown)
 	if bonus > 0:
 		GameState.add_gold(bonus)
 		Events.early_call_bonus.emit(bonus)

@@ -3,16 +3,23 @@ extends Node2D
 
 ## A built tower: picks a target in range, respects its fire rate, and launches
 ## projectiles. Every number it uses comes from the current TowerLevel, so an
-## upgrade in M5 is just `level_index += 1`.
+## upgrade is nothing more than pointing at a different TowerLevel.
 
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/towers/Projectile.tscn")
 const MUZZLE_OFFSET: float = 22.0
+## Fraction of everything invested that a sale returns.
+const SELL_REFUND_RATIO: float = 0.7
 
 @export var data: TowerData
 
-## Index into data.levels. Bumped by the upgrade panel in M5.
+## Index into data.levels. 0 = level 1.
 var level_index: int = 0
+## "" while on the normal ladder, then &"a" or &"b" once specialized.
+var branch: StringName = &""
+## Shown while hovering.
 var show_range: bool = false
+## Held on while the upgrade panel is open.
+var range_pinned: bool = false
 
 var _cooldown: float = 0.0
 var _turret_angle: float = 0.0
@@ -26,11 +33,103 @@ func _ready() -> void:
 	queue_redraw()
 
 
+# --- Level model -------------------------------------------------------------
+
 func current_level() -> TowerLevel:
-	if data == null or data.levels.is_empty():
+	if data == null:
+		return null
+	if branch == &"a" and data.branch_a != null:
+		return data.branch_a
+	if branch == &"b" and data.branch_b != null:
+		return data.branch_b
+	if data.levels.is_empty():
 		return null
 	return data.levels[clampi(level_index, 0, data.levels.size() - 1)]
 
+
+func is_specialized() -> bool:
+	return branch != &""
+
+
+func is_max_level() -> bool:
+	return data == null or level_index >= data.max_level_index()
+
+
+func can_upgrade() -> bool:
+	return not is_specialized() and not is_max_level()
+
+
+## The specialization choice only appears at the top of the normal ladder.
+func can_specialize() -> bool:
+	if data == null or is_specialized() or not is_max_level():
+		return false
+	return data.branch_a != null or data.branch_b != null
+
+
+func next_level() -> TowerLevel:
+	if not can_upgrade():
+		return null
+	return data.levels[level_index + 1]
+
+
+func upgrade_cost() -> int:
+	var nxt := next_level()
+	return nxt.upgrade_cost if nxt != null else 0
+
+
+func level_label() -> String:
+	if data == null:
+		return ""
+	if branch == &"a":
+		return data.branch_a_name
+	if branch == &"b":
+		return data.branch_b_name
+	return "Lv %d" % (level_index + 1)
+
+
+func upgrade() -> void:
+	if not can_upgrade():
+		return
+	level_index += 1
+	Events.tower_upgraded.emit(self, level_index + 1)
+	queue_redraw()
+
+
+func specialize(which: StringName) -> void:
+	if is_specialized():
+		return
+	branch = which
+	Events.tower_upgraded.emit(self, data.levels.size() + 1)
+	queue_redraw()
+
+
+# --- Economy -----------------------------------------------------------------
+
+## Build cost plus every upgrade actually paid for.
+func total_invested() -> int:
+	if data == null:
+		return 0
+
+	var total: int = data.build_cost
+	var top: int = mini(level_index, data.levels.size() - 1)
+	for i in range(1, top + 1):
+		var lvl := data.levels[i] as TowerLevel
+		if lvl != null:
+			total += lvl.upgrade_cost
+
+	if branch == &"a" and data.branch_a != null:
+		total += data.branch_a.upgrade_cost
+	elif branch == &"b" and data.branch_b != null:
+		total += data.branch_b.upgrade_cost
+
+	return total
+
+
+func sell_value() -> int:
+	return int(floor(float(total_invested()) * SELL_REFUND_RATIO))
+
+
+# --- Combat ------------------------------------------------------------------
 
 func get_attack_range() -> float:
 	var lvl := current_level()
@@ -41,6 +140,13 @@ func set_range_visible(value: bool) -> void:
 	if show_range == value:
 		return
 	show_range = value
+	queue_redraw()
+
+
+func set_range_pinned(value: bool) -> void:
+	if range_pinned == value:
+		return
+	range_pinned = value
 	queue_redraw()
 
 
@@ -122,19 +228,33 @@ func _projectile_root() -> Node:
 	return root if root != null else get_tree().current_scene
 
 
+# --- Drawing -----------------------------------------------------------------
+
 func _draw() -> void:
 	if data == null:
 		return
 
-	if show_range:
+	var lvl := current_level()
+	var s: float = lvl.sprite_scale if lvl != null else 1.0
+
+	if show_range or range_pinned:
 		var r := get_attack_range()
 		draw_circle(Vector2.ZERO, r, Color(1.0, 1.0, 1.0, 0.06))
 		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(1.0, 1.0, 1.0, 0.35), 2.0)
 
 	# Placeholder body. Replaced by painted art in M8.
-	draw_circle(Vector2.ZERO, 24.0, Color(0.07, 0.07, 0.09, 0.95))
-	draw_circle(Vector2.ZERO, 19.0, data.accent_color)
+	draw_circle(Vector2.ZERO, 24.0 * s, Color(0.07, 0.07, 0.09, 0.95))
+	draw_circle(Vector2.ZERO, 19.0 * s, data.accent_color)
 
 	# Barrel, so you can see what it is aiming at.
-	draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0, Color(0.07, 0.07, 0.09, 0.95), 8.0)
-	draw_circle(Vector2.ZERO, 9.0, data.accent_color.lightened(0.3))
+	draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0 * s, Color(0.07, 0.07, 0.09, 0.95), 8.0)
+	draw_circle(Vector2.ZERO, 9.0 * s, data.accent_color.lightened(0.3))
+
+	# Rank read-out: pips while levelling, a gold ring once specialized.
+	if is_specialized():
+		draw_arc(Vector2.ZERO, 29.0 * s, 0.0, TAU, 48, Color(1.0, 0.85, 0.35, 0.95), 3.0)
+	else:
+		var pips: int = level_index + 1
+		var start_x: float = -float(pips - 1) * 5.0
+		for i in pips:
+			draw_circle(Vector2(start_x + float(i) * 10.0, -32.0 * s), 3.0, Color(1, 1, 1, 0.9))

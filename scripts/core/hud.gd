@@ -48,8 +48,10 @@ func _on_countdown_changed(seconds_left: float) -> void:
 		status_label.text = "Wave incoming — hold the line."
 		return
 
-	var bonus: int = int(floor(seconds_left)) * WaveManager.EARLY_CALL_GOLD_PER_SECOND
-	status_label.text = "Next wave in %.1fs   ·   SPACE to call it early (+%d gold)" % [seconds_left, bonus]
+	# Whole seconds only. ceili keeps it reading "1s" until the wave actually lands.
+	var whole: int = ceili(seconds_left)
+	var bonus: int = WaveManager.early_call_bonus_for(seconds_left)
+	status_label.text = "Next wave in %ds   ·   SPACE to call it early (+%d gold)" % [whole, bonus]
 
 
 func _on_early_call_bonus(amount: int) -> void:

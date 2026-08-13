@@ -5,6 +5,7 @@ extends Area2D
 ## free placement — it is the genre standard and removes a whole class of
 ## pathing and overlap problems.
 
+## Emitted for both empty and occupied plots. Level decides which menu to open.
 signal pressed(plot: BuildPlot)
 
 const TOWER_SCENE: PackedScene = preload("res://scenes/towers/TowerBase.tscn")
@@ -37,12 +38,19 @@ func build_tower(tower_data: TowerData) -> Tower:
 	return new_tower
 
 
+func remove_tower() -> void:
+	if tower != null and is_instance_valid(tower):
+		tower.queue_free()
+	tower = null
+	_hovered = false
+	queue_redraw()
+
+
 func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not is_occupied():
-			pressed.emit(self)
-			# Stops Level._unhandled_input from closing the menu we just opened.
-			get_viewport().set_input_as_handled()
+		pressed.emit(self)
+		# Stops Level._unhandled_input from closing the menu we just opened.
+		get_viewport().set_input_as_handled()
 
 
 func _on_mouse_entered() -> void:
