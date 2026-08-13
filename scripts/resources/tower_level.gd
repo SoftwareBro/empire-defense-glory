@@ -2,7 +2,7 @@ class_name TowerLevel
 extends Resource
 
 ## One rung on a tower's upgrade ladder. Levels 1-3 use these, and so do the
-## two specialization branches unlocked at max level — a branch is just another
+## two specialization branches unlocked at max level - a branch is just another
 ## TowerLevel with bigger numbers and a different name.
 
 @export_group("Combat")
@@ -39,3 +39,7 @@ extends Resource
 ## How far from the tower centre a shot is born. Set this so shots leave the
 ## muzzle instead of the middle of the model.
 @export var muzzle_offset: float = 22.0
+## Draws an animated bowstring, a bolt being cocked, and a spinning magazine
+## on top of the turret art. Only meaningful for crossbow-style towers, and it
+## expects the geometry of art/towers/autoarcher/turret_l1.svg.
+@export var bow_rig: bool = false

@@ -22,6 +22,7 @@ texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.0
 muzzle_offset = 28.0
+bow_rig = true
 
 [sub_resource type="Resource" id="TowerLevel_2"]
 script = ExtResource("2_tower_level")
@@ -39,6 +40,7 @@ texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.05
 muzzle_offset = 28.0
+bow_rig = true
 
 [sub_resource type="Resource" id="TowerLevel_3"]
 script = ExtResource("2_tower_level")
@@ -56,6 +58,7 @@ texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.1
 muzzle_offset = 28.0
+bow_rig = true
 
 [sub_resource type="Resource" id="TowerLevel_A"]
 script = ExtResource("2_tower_level")
@@ -73,6 +76,7 @@ texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.2
 muzzle_offset = 28.0
+bow_rig = true
 
 [sub_resource type="Resource" id="TowerLevel_B"]
 script = ExtResource("2_tower_level")
@@ -90,6 +94,7 @@ texture = ExtResource("3_base")
 turret_texture = ExtResource("4_turret")
 sprite_scale = 1.2
 muzzle_offset = 28.0
+bow_rig = true
 
 [resource]
 script = ExtResource("1_tower_data")

@@ -14,6 +14,45 @@ const ART_SCALE: float = 0.25
 ## Fraction of everything invested that a sale returns.
 const SELL_REFUND_RATIO: float = 0.7
 
+## Art convention: every sprite is authored on a square canvas over a 96-unit
+## viewBox with the pivot dead centre. These two let code draw moving parts
+## using the very same coordinates the SVG uses, so they line up exactly.
+const ART_VIEWBOX: float = 96.0
+const ART_CENTRE: Vector2 = Vector2(48.0, 48.0)
+
+# --- Crossbow rig ------------------------------------------------------------
+# The bowstring, nocked bolt and magazine bolt ends are drawn here rather than
+# baked into turret_l1.svg, because they have to move. All coordinates below are
+# in that file's viewBox units.
+
+const LIMB_TIP_A: Vector2 = Vector2(83.5, 26.0)
+const LIMB_TIP_B: Vector2 = Vector2(83.5, 70.0)
+const DRUM_CENTRE: Vector2 = Vector2(40.0, 48.0)
+const DRUM_RADIUS: float = 5.0
+## String apex, snapped forward vs hauled back and cocked.
+const STRING_REST_X: float = 78.0
+const STRING_DRAW_X: float = 53.5
+## Bolt nock, freshly fed vs pulled back under tension.
+const BOLT_REST_X: float = 63.0
+const BOLT_DRAW_X: float = 55.0
+## Seconds the string takes to snap forward after a shot.
+const RELEASE_TIME: float = 0.07
+## Seconds the weapon spends kicking backward and settling.
+const RECOIL_TIME: float = 0.16
+const RECOIL_PX: float = 3.0
+## Cocking never drags on longer than this, so slow towers sit visibly ready
+## instead of creeping through the whole reload.
+const MAX_COCK_TIME: float = 0.45
+## Radians of idle drift while the tower has nothing to shoot at.
+const IDLE_SWAY: float = 0.05
+
+const OUTLINE_COLOR: Color = Color(0.129, 0.102, 0.086)
+const STRING_COLOR: Color = Color(0.937, 0.902, 0.804)
+const BOLT_WOOD_COLOR: Color = Color(0.71, 0.514, 0.29)
+const BOLT_STEEL_COLOR: Color = Color(0.796, 0.843, 0.878)
+const BRASS_DARK_COLOR: Color = Color(0.557, 0.392, 0.086)
+const BRASS_LIGHT_COLOR: Color = Color(0.941, 0.761, 0.373)
+
 @export var data: TowerData
 
 ## Index into data.levels. 0 = level 1.
@@ -28,12 +67,25 @@ var range_pinned: bool = false
 var _cooldown: float = 0.0
 var _turret_angle: float = 0.0
 
+## Seconds since the last shot. Starts high so a newly built tower reads as
+## loaded and ready rather than mid-reload.
+var _shot_t: float = 99.0
+## How long the cocking stroke is allowed to take, derived from the fire rate.
+var _cock_span: float = 0.5
+var _idle_t: float = 0.0
+var _sway_amount: float = 1.0
+var _sway_offset: float = 0.0
+var _drum_angle: float = 0.0
+var _drum_target: float = 0.0
+
 
 func _ready() -> void:
 	if data == null:
 		push_error("Tower placed without TowerData.")
 		queue_free()
 		return
+	# Stagger the idle drift so a row of towers never sways in lockstep.
+	_idle_t = randf() * 10.0
 	queue_redraw()
 
 
@@ -162,18 +214,46 @@ func _physics_process(delta: float) -> void:
 	if _cooldown > 0.0:
 		_cooldown -= delta
 
-	var target := _find_target(lvl)
-	if target == null:
-		return
+	_shot_t += delta
+	_idle_t += delta
 
-	var new_angle: float = (target.global_position - global_position).angle()
-	if not is_equal_approx(new_angle, _turret_angle):
-		_turret_angle = new_angle
+	var target := _find_target(lvl)
+	# Animated towers repaint every frame; plain ones only when they turn.
+	var redraw: bool = lvl.bow_rig
+
+	if target != null:
+		var new_angle: float = (target.global_position - global_position).angle()
+		if not is_equal_approx(new_angle, _turret_angle):
+			_turret_angle = new_angle
+			redraw = true
+
+		if _cooldown <= 0.0:
+			_fire(target, lvl)
+			_cooldown = 1.0 / maxf(lvl.fire_rate, 0.01)
+			_shot_t = 0.0
+			_drum_target += TAU / 6.0
+			redraw = true
+
+	if lvl.bow_rig:
+		_advance_bow_rig(delta, lvl, target != null)
+
+	if redraw:
 		queue_redraw()
 
-	if _cooldown <= 0.0:
-		_fire(target, lvl)
-		_cooldown = 1.0 / maxf(lvl.fire_rate, 0.01)
+
+## Keeps the animated crossbow parts moving. Cocking is stretched to fill
+## whatever is left of the firing cycle, so a Ranger Camp reloads frantically
+## while a level 1 tower finishes early and holds the shot.
+func _advance_bow_rig(delta: float, lvl: TowerLevel, has_target: bool) -> void:
+	var cycle: float = 1.0 / maxf(lvl.fire_rate, 0.01)
+	_cock_span = clampf(cycle * 0.8, RELEASE_TIME + 0.06, RELEASE_TIME + MAX_COCK_TIME)
+
+	# The magazine steps one chamber per shot and eases into place.
+	_drum_angle = lerpf(_drum_angle, _drum_target, minf(delta * 12.0, 1.0))
+
+	# Idle drift fades out the moment something walks into range.
+	_sway_amount = lerpf(_sway_amount, 0.0 if has_target else 1.0, minf(delta * 4.0, 1.0))
+	_sway_offset = sin(_idle_t * 1.7) * IDLE_SWAY * _sway_amount
 
 
 ## Scans the enemy group and picks one according to data.targeting_mode.
@@ -210,7 +290,7 @@ func _score_target(enemy: Enemy, dist_sq: float) -> float:
 		"strongest":
 			return enemy.health
 		_:
-			# "first" — furthest along the path, the genre default.
+			# "first" - furthest along the path, the genre default.
 			return enemy.progress
 
 
@@ -261,10 +341,19 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, 24.0 * s, Color(0.07, 0.07, 0.09, 0.95))
 		draw_circle(Vector2.ZERO, 19.0 * s, data.accent_color)
 
-	# Moving half: authored pointing right, spun to face the target.
+	# Moving half: authored pointing right, spun to face the target and shoved
+	# backward for a moment after each shot.
 	if turret_tex != null:
-		draw_set_transform(Vector2.ZERO, _turret_angle, Vector2.ONE)
+		var angle: float = _turret_angle + _sway_offset
+		var kick: float = 0.0
+		if _shot_t < RECOIL_TIME:
+			var k: float = 1.0 - _shot_t / RECOIL_TIME
+			kick = -RECOIL_PX * k * k * s
+
+		draw_set_transform(Vector2.from_angle(angle) * kick, angle, Vector2.ONE)
 		_blit(turret_tex, s)
+		if lvl != null and lvl.bow_rig:
+			_draw_bow_rig(float(turret_tex.get_width()) * ART_SCALE * s / ART_VIEWBOX)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	elif base_tex == null:
 		draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0 * s, Color(0.07, 0.07, 0.09, 0.95), 8.0)
@@ -278,6 +367,69 @@ func _draw() -> void:
 		var start_x: float = -float(pips - 1) * 5.0
 		for i in pips:
 			draw_circle(Vector2(start_x + float(i) * 10.0, -32.0 * s), 3.0, Color(1, 1, 1, 0.9))
+
+
+## Draws the parts of the crossbow that move. Called inside the turret's
+## transform, so everything here is in turret space with +X forward.
+## `unit` converts one authored viewBox unit into pixels.
+func _draw_bow_rig(unit: float) -> void:
+	# cocked: 0 = string snapped fully forward, 1 = hauled back and loaded.
+	var cocked: float = 1.0
+	var bolt_loaded: bool = true
+	var twang: float = 0.0
+
+	if _shot_t < RELEASE_TIME:
+		# Mid-release. The bolt has become a real projectile and left the rail,
+		# so only the string is left, snapping forward and shivering.
+		var r: float = _shot_t / RELEASE_TIME
+		cocked = 1.0 - r
+		bolt_loaded = false
+		twang = sin(r * 26.0) * (1.0 - r) * 2.4
+	else:
+		# Cocking. A fresh bolt is fed in, then dragged back with the string.
+		var span: float = maxf(_cock_span - RELEASE_TIME, 0.05)
+		var u: float = clampf((_shot_t - RELEASE_TIME) / span, 0.0, 1.0)
+		cocked = u * u * (3.0 - 2.0 * u)
+
+	# The rope, hooked over both steel nocks and pulled into a V.
+	var apex_x: float = lerpf(STRING_REST_X, STRING_DRAW_X, cocked)
+	var string_pts := PackedVector2Array([
+		_art(LIMB_TIP_A, unit),
+		_art(Vector2(apex_x, 48.0 + twang), unit),
+		_art(LIMB_TIP_B, unit),
+	])
+	draw_polyline(string_pts, OUTLINE_COLOR, maxf(2.2 * unit, 1.4), true)
+	draw_polyline(string_pts, STRING_COLOR, maxf(1.1 * unit, 0.8), true)
+
+	# The bolt waiting on the rail, held back by the string.
+	if bolt_loaded:
+		var nock: Vector2 = Vector2(lerpf(BOLT_REST_X, BOLT_DRAW_X, cocked), 48.0)
+		var tail: Vector2 = _art(nock, unit)
+		var head: Vector2 = _art(nock + Vector2(24.0, 0.0), unit)
+		draw_line(tail, head, OUTLINE_COLOR, maxf(4.2 * unit, 1.6))
+		draw_line(tail, head, BOLT_WOOD_COLOR, maxf(2.2 * unit, 1.0))
+
+		var tip := PackedVector2Array([
+			_art(nock + Vector2(22.0, -4.4), unit),
+			_art(nock + Vector2(34.0, 0.0), unit),
+			_art(nock + Vector2(22.0, 4.4), unit),
+		])
+		draw_colored_polygon(tip, BOLT_STEEL_COLOR)
+		draw_polyline(tip, OUTLINE_COLOR, maxf(1.5 * unit, 1.0), true)
+
+	# Magazine bolt ends, stepping round one chamber per shot.
+	var hub: Vector2 = _art(DRUM_CENTRE, unit)
+	var ring: float = DRUM_RADIUS * unit
+	for i in 6:
+		var p: Vector2 = hub + Vector2.from_angle(_drum_angle + float(i) * TAU / 6.0) * ring
+		draw_circle(p, maxf(1.6 * unit, 1.0), BRASS_DARK_COLOR)
+		draw_circle(p - Vector2(0.35, 0.35) * unit, maxf(0.7 * unit, 0.6), BRASS_LIGHT_COLOR)
+
+
+## Turns a point authored in the art's 96-unit viewBox into pixels relative to
+## the pivot, so code-drawn parts sit exactly where the sprite expects them.
+func _art(v: Vector2, unit: float) -> Vector2:
+	return (v - ART_CENTRE) * unit
 
 
 ## Draws a texture centred on the tower's origin at the level's sprite scale.
