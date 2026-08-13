@@ -6,7 +6,11 @@ extends Node2D
 ## upgrade is nothing more than pointing at a different TowerLevel.
 
 const PROJECTILE_SCENE: PackedScene = preload("res://scenes/towers/Projectile.tscn")
+## Fallback muzzle distance for levels that never set one.
 const MUZZLE_OFFSET: float = 22.0
+## Art is authored oversized so it stays crisp when zoomed. This scales it back
+## down to game pixels: a 256px canvas renders at 64px.
+const ART_SCALE: float = 0.25
 ## Fraction of everything invested that a sale returns.
 const SELL_REFUND_RATIO: float = 0.7
 
@@ -215,7 +219,8 @@ func _fire(target: Enemy, lvl: TowerLevel) -> void:
 	if root == null:
 		return
 
-	var muzzle: Vector2 = global_position + Vector2.from_angle(_turret_angle) * MUZZLE_OFFSET
+	var reach: float = lvl.muzzle_offset if lvl.muzzle_offset > 0.0 else MUZZLE_OFFSET
+	var muzzle: Vector2 = global_position + Vector2.from_angle(_turret_angle) * reach * lvl.sprite_scale
 
 	var projectile: Projectile = PROJECTILE_SCENE.instantiate()
 	projectile.setup(target, lvl)
@@ -246,13 +251,24 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, r, Color(1.0, 1.0, 1.0, 0.06))
 		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(1.0, 1.0, 1.0, 0.35), 2.0)
 
-	# Placeholder body. Replaced by painted art in M8.
-	draw_circle(Vector2.ZERO, 24.0 * s, Color(0.07, 0.07, 0.09, 0.95))
-	draw_circle(Vector2.ZERO, 19.0 * s, data.accent_color)
+	var base_tex: Texture2D = lvl.texture if lvl != null else null
+	var turret_tex: Texture2D = lvl.turret_texture if lvl != null else null
 
-	# Barrel, so you can see what it is aiming at.
-	draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0 * s, Color(0.07, 0.07, 0.09, 0.95), 8.0)
-	draw_circle(Vector2.ZERO, 9.0 * s, data.accent_color.lightened(0.3))
+	# Static half: foundation, deck, mount.
+	if base_tex != null:
+		_blit(base_tex, s)
+	else:
+		draw_circle(Vector2.ZERO, 24.0 * s, Color(0.07, 0.07, 0.09, 0.95))
+		draw_circle(Vector2.ZERO, 19.0 * s, data.accent_color)
+
+	# Moving half: authored pointing right, spun to face the target.
+	if turret_tex != null:
+		draw_set_transform(Vector2.ZERO, _turret_angle, Vector2.ONE)
+		_blit(turret_tex, s)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	elif base_tex == null:
+		draw_line(Vector2.ZERO, Vector2.from_angle(_turret_angle) * 26.0 * s, Color(0.07, 0.07, 0.09, 0.95), 8.0)
+		draw_circle(Vector2.ZERO, 9.0 * s, data.accent_color.lightened(0.3))
 
 	# Rank read-out: pips while levelling, a gold ring once specialized.
 	if is_specialized():
@@ -262,3 +278,9 @@ func _draw() -> void:
 		var start_x: float = -float(pips - 1) * 5.0
 		for i in pips:
 			draw_circle(Vector2(start_x + float(i) * 10.0, -32.0 * s), 3.0, Color(1, 1, 1, 0.9))
+
+
+## Draws a texture centred on the tower's origin at the level's sprite scale.
+func _blit(tex: Texture2D, s: float) -> void:
+	var size: Vector2 = Vector2(float(tex.get_width()), float(tex.get_height())) * ART_SCALE * s
+	draw_texture_rect(tex, Rect2(-size * 0.5, size), false)

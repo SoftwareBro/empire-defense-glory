@@ -5,6 +5,11 @@ extends Node2D
 ## known position too — so if the target dies mid-flight the shot still lands
 ## where it was headed instead of vanishing or crashing.
 
+## Matches Tower.ART_SCALE: art is authored oversized and scaled back down.
+const ART_SCALE: float = 0.25
+## projectile_radius that ART_SCALE was tuned against. Bigger shots draw bigger.
+const REFERENCE_RADIUS: float = 4.0
+
 var target: Enemy = null
 var damage: float = 10.0
 var damage_type: String = "physical"
@@ -12,6 +17,7 @@ var speed: float = 520.0
 var splash_radius: float = 0.0
 var color: Color = Color.WHITE
 var radius: float = 5.0
+var texture: Texture2D = null
 
 var _aim_point: Vector2 = Vector2.ZERO
 var _lifetime: float = 0.0
@@ -25,6 +31,7 @@ func setup(enemy: Enemy, level: TowerLevel) -> void:
 	splash_radius = level.splash_radius
 	color = level.projectile_color
 	radius = level.projectile_radius
+	texture = level.projectile_texture
 	_aim_point = enemy.global_position
 
 
@@ -71,5 +78,13 @@ func _impact() -> void:
 
 
 func _draw() -> void:
+	# The node's rotation already points along the direction of travel, so art
+	# authored pointing right lands the right way round for free.
+	if texture != null:
+		var bulk: float = maxf(radius, 1.0) / REFERENCE_RADIUS
+		var size: Vector2 = Vector2(float(texture.get_width()), float(texture.get_height())) * ART_SCALE * bulk
+		draw_texture_rect(texture, Rect2(-size * 0.5, size), false)
+		return
+
 	draw_circle(Vector2.ZERO, radius, color)
 	draw_circle(Vector2.ZERO, radius * 0.45, color.lightened(0.5))

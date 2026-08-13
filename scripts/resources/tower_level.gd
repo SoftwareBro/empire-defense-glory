@@ -20,11 +20,22 @@ extends Resource
 @export var projectile_speed: float = 520.0
 @export var projectile_color: Color = Color.WHITE
 @export var projectile_radius: float = 5.0
+## Optional art for the shot. Author it pointing RIGHT with the centre of the
+## canvas on the shot's middle; it gets rotated to match the direction of
+## travel. When null, the shot falls back to the drawn circle.
+@export var projectile_texture: Texture2D
 
 @export_group("Economy")
 ## Gold to reach this level from the previous one. Level 1 uses TowerData.build_cost.
 @export var upgrade_cost: int = 0
 
 @export_group("Visuals")
+## The part that never moves: foundation, deck, mount.
 @export var texture: Texture2D
+## The part that spins to face the target. Author it pointing RIGHT, with the
+## pivot on the exact centre of the canvas.
+@export var turret_texture: Texture2D
 @export var sprite_scale: float = 1.0
+## How far from the tower centre a shot is born. Set this so shots leave the
+## muzzle instead of the middle of the model.
+@export var muzzle_offset: float = 22.0
