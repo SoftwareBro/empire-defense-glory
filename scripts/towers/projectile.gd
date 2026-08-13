@@ -1,0 +1,71 @@
+class_name Projectile
+extends Node2D
+
+## A homing shot. It tracks its target's live position, but remembers the last
+## known position too — so if the target dies mid-flight the shot still lands
+## where it was headed instead of vanishing or crashing.
+
+var target: Enemy = null
+var damage: float = 10.0
+var damage_type: String = "physical"
+var speed: float = 520.0
+var splash_radius: float = 0.0
+var color: Color = Color.WHITE
+var radius: float = 5.0
+
+var _aim_point: Vector2 = Vector2.ZERO
+var _lifetime: float = 0.0
+
+
+func setup(enemy: Enemy, level: TowerLevel) -> void:
+	target = enemy
+	damage = level.damage
+	damage_type = level.damage_type
+	speed = maxf(level.projectile_speed, 40.0)
+	splash_radius = level.splash_radius
+	color = level.projectile_color
+	radius = level.projectile_radius
+	_aim_point = enemy.global_position
+
+
+func _physics_process(delta: float) -> void:
+	# Fail-safe so a stray shot can never live forever.
+	_lifetime += delta
+	if _lifetime > 5.0:
+		queue_free()
+		return
+
+	if target != null and is_instance_valid(target) and not target.is_dead():
+		_aim_point = target.global_position
+
+	var to_target: Vector2 = _aim_point - global_position
+	var step: float = speed * delta
+
+	if to_target.length() <= step:
+		global_position = _aim_point
+		_impact()
+		return
+
+	rotation = to_target.angle()
+	global_position += to_target.normalized() * step
+	queue_redraw()
+
+
+func _impact() -> void:
+	if splash_radius > 0.0:
+		var splash_sq: float = splash_radius * splash_radius
+		for node in get_tree().get_nodes_in_group(Enemy.GROUP):
+			var enemy := node as Enemy
+			if enemy == null or enemy.is_dead():
+				continue
+			if global_position.distance_squared_to(enemy.global_position) <= splash_sq:
+				enemy.take_damage(damage, damage_type)
+	elif target != null and is_instance_valid(target) and not target.is_dead():
+		target.take_damage(damage, damage_type)
+
+	queue_free()
+
+
+func _draw() -> void:
+	draw_circle(Vector2.ZERO, radius, color)
+	draw_circle(Vector2.ZERO, radius * 0.45, color.lightened(0.5))

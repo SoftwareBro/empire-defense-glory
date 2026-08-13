@@ -13,6 +13,15 @@ extends Resource
 ## Placeholder tint until real art lands.
 @export var accent_color: Color = Color.WHITE
 
+@export_group("Targeting")
+## first    = furthest along the path (the classic tower defense default)
+## last     = least far along, good for cleanup towers
+## closest  = nearest to the tower
+## strongest = highest current health
+@export_enum("first", "last", "closest", "strongest") var targeting_mode: String = "first"
+## Ground-only towers (barracks, artillery) cannot shoot flyers.
+@export var can_hit_flying: bool = true
+
 ## Array of TowerLevel. Index 0 is level 1.
 @export var levels: Array = []
 

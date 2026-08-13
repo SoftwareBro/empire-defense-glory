@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LevelData" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="LevelData" load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/level_data.gd" id="1_level_data"]
 [ext_resource type="Script" path="res://scripts/resources/wave_data.gd" id="2_wave_data"]
@@ -12,7 +12,7 @@
 [sub_resource type="Resource" id="WaveEntry_1"]
 script = ExtResource("3_wave_entry")
 enemy = ExtResource("4_grunt")
-count = 5
+count = 6
 interval = 1.0
 start_delay = 0.0
 
@@ -20,6 +20,37 @@ start_delay = 0.0
 script = ExtResource("2_wave_data")
 entries = [SubResource("WaveEntry_1")]
 delay_before = 2.0
+
+[sub_resource type="Resource" id="WaveEntry_2"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 10
+interval = 0.7
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveData_2"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_2")]
+delay_before = 3.0
+
+[sub_resource type="Resource" id="WaveEntry_3A"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 8
+interval = 0.6
+start_delay = 0.0
+
+[sub_resource type="Resource" id="WaveEntry_3B"]
+script = ExtResource("3_wave_entry")
+enemy = ExtResource("4_grunt")
+count = 6
+interval = 0.45
+start_delay = 4.0
+
+[sub_resource type="Resource" id="WaveData_3"]
+script = ExtResource("2_wave_data")
+entries = [SubResource("WaveEntry_3A"), SubResource("WaveEntry_3B")]
+delay_before = 3.0
 
 [resource]
 script = ExtResource("1_level_data")
@@ -29,4 +60,4 @@ plot_points = PackedVector2Array(180, 265, 280, 455, 440, 270, 620, 470, 760, 23
 available_towers = [ExtResource("5_archer"), ExtResource("6_barracks"), ExtResource("7_mage"), ExtResource("8_artillery")]
 starting_gold = 200
 starting_lives = 20
-waves = [SubResource("WaveData_1")]
+waves = [SubResource("WaveData_1"), SubResource("WaveData_2"), SubResource("WaveData_3")]

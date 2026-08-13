@@ -7,10 +7,13 @@ extends Area2D
 ## and samples the curve every frame. That keeps it a flat top-level node,
 ## which makes targeting, pooling and death effects far simpler later on.
 
+## Towers find their targets through this group.
+const GROUP: StringName = &"enemies"
+
 @export var data: EnemyData
 
 var health: float = 1.0
-## Distance travelled along the curve, in pixels.
+## Distance travelled along the curve, in pixels. Used for "first" targeting.
 var progress: float = 0.0
 ## Set below 1.0 by slow effects, above 1.0 by haste. Used from M6 onward.
 var speed_multiplier: float = 1.0
@@ -39,6 +42,8 @@ func _ready() -> void:
 		queue_free()
 		return
 
+	add_to_group(GROUP)
+
 	health = data.max_health
 	if data.texture != null:
 		sprite.texture = data.texture
@@ -50,6 +55,10 @@ func _ready() -> void:
 
 	if _curve != null:
 		_move_to(0.0)
+
+
+func is_dead() -> bool:
+	return _is_dead
 
 
 func _physics_process(delta: float) -> void:
@@ -72,7 +81,7 @@ func _move_to(offset: float) -> void:
 	global_position = target
 
 
-## damage_type is "physical" or "magic". Used by towers from M3 onward.
+## damage_type is "physical" or "magic".
 func take_damage(amount: float, damage_type: String = "physical") -> void:
 	if _is_dead:
 		return
@@ -89,6 +98,9 @@ func take_damage(amount: float, damage_type: String = "physical") -> void:
 
 func _die() -> void:
 	_is_dead = true
+	# Leave the group immediately so towers stop targeting a corpse. queue_free
+	# is deferred, so without this the node lingers for the rest of the frame.
+	remove_from_group(GROUP)
 	GameState.add_gold(data.bounty)
 	Events.enemy_died.emit(self, data.bounty)
 	queue_free()
@@ -96,6 +108,7 @@ func _die() -> void:
 
 func _leak() -> void:
 	_is_dead = true
+	remove_from_group(GROUP)
 	GameState.lose_lives(data.leak_damage)
 	Events.enemy_leaked.emit(self, data.leak_damage)
 	queue_free()

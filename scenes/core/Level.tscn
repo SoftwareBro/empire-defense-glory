@@ -33,6 +33,8 @@ end_cap_mode = 2
 
 [node name="Enemies" type="Node2D" parent="."]
 
+[node name="Projectiles" type="Node2D" parent="." groups=["projectile_root"]]
+
 [node name="BuildMenu" type="Node2D" parent="."]
 script = ExtResource("4_build_menu")
 
