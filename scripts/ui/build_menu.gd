@@ -17,8 +17,12 @@ func _ready() -> void:
 
 
 func open(plot: BuildPlot, towers: Array) -> void:
-	if plot == null or towers.is_empty():
+	if plot == null:
 		return
+	if towers.is_empty():
+		push_warning("BuildMenu opened but available_towers is empty. Check LevelData.")
+		return
+
 	_plot = plot
 	_towers = towers
 	global_position = plot.global_position
@@ -46,9 +50,12 @@ func _rebuild_buttons() -> void:
 	_clear_buttons()
 
 	var count: int = _towers.size()
+	var created: int = 0
+
 	for i in count:
 		var tower_data: TowerData = _towers[i]
 		if tower_data == null:
+			push_warning("available_towers[%d] is null — a tower .tres failed to load." % i)
 			continue
 
 		# Start at the top and go clockwise.
@@ -61,6 +68,10 @@ func _rebuild_buttons() -> void:
 		button.disabled = not GameState.can_afford(tower_data.build_cost)
 		button.pressed.connect(_on_tower_chosen.bind(tower_data))
 		add_child(button)
+		created += 1
+
+	if created == 0:
+		push_warning("BuildMenu created zero buttons — nothing will be visible.")
 
 
 func _on_tower_chosen(tower_data: TowerData) -> void:

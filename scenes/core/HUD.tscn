@@ -10,6 +10,7 @@ offset_left = 16.0
 offset_top = 12.0
 offset_right = 560.0
 offset_bottom = 44.0
+mouse_filter = 2
 theme_override_constants/separation = 40
 
 [node name="GoldLabel" type="Label" parent="TopBar"]
@@ -29,4 +30,5 @@ offset_left = 16.0
 offset_top = 672.0
 offset_right = 900.0
 offset_bottom = 700.0
+mouse_filter = 2
 text = "Click a build plot to place a tower  ·  SPACE to start the next wave"
